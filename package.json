@@ -1,0 +1,38 @@
+{
+  "name": "@onecount/ui",
+  "version": "0.1.0",
+  "description": "Shared React Native component extractions for the OneCount family.",
+  "license": "UNLICENSED",
+  "private": false,
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "src"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "test": "node scripts/smoke.mjs"
+  },
+  "dependencies": {
+    "@onecount/ui-tokens": "github:cameronharris-ux/onecount-ui-tokens#v0.3.0"
+  },
+  "peerDependencies": {
+    "expo-haptics": "*",
+    "react": ">=18",
+    "react-native": ">=0.74",
+    "react-native-reanimated": ">=4",
+    "react-native-svg": ">=15"
+  },
+  "peerDependenciesMeta": {
+    "expo-haptics": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "@types/react": "^19.0.0",
+    "react-native": "^0.83.0",
+    "typescript": "^5.3.3"
+  }
+}
+
