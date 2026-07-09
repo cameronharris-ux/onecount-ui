@@ -9,4 +9,4 @@ export interface AiCardProps {
     style?: StyleProp<ViewStyle>;
     contentStyle?: StyleProp<ViewStyle>;
 }
-export declare function AiCard({ children, app, scheme, halo, style, contentStyle, }: AiCardProps): import("react/jsx-runtime").JSX.Element;
+export declare function AiCard({ children, app, scheme, halo, style, contentStyle, }: AiCardProps): React.JSX.Element;

@@ -6,4 +6,4 @@ export interface PressableScaleProps extends Omit<PressableProps, "style"> {
     style?: StyleProp<ViewStyle>;
     children?: React.ReactNode;
 }
-export declare function PressableScale({ pressedScale, pressedOpacity, disabled, onPressIn, onPressOut, style, children, ...rest }: PressableScaleProps): import("react/jsx-runtime").JSX.Element;
+export declare function PressableScale({ pressedScale, pressedOpacity, disabled, onPressIn, onPressOut, style, children, ...rest }: PressableScaleProps): React.JSX.Element;

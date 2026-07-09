@@ -1,3 +1,4 @@
+import React from "react";
 import { type OneCountApp } from "./internal";
 export interface AuroraProps {
     app?: OneCountApp;
@@ -7,4 +8,4 @@ export interface AuroraProps {
     height?: number;
     intensity?: number;
 }
-export declare function Aurora({ app, hue, variant, full, height, intensity, }: AuroraProps): import("react/jsx-runtime").JSX.Element;
+export declare function Aurora({ app, hue, variant, full, height, intensity, }: AuroraProps): React.JSX.Element;

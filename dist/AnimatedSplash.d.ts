@@ -1,3 +1,4 @@
+import React from "react";
 import { type ImageSourcePropType, type StyleProp, type ViewStyle } from "react-native";
 export interface AnimatedSplashProps {
     markSource: ImageSourcePropType;
@@ -7,4 +8,4 @@ export interface AnimatedSplashProps {
     onDone?: () => void;
     style?: StyleProp<ViewStyle>;
 }
-export declare function AnimatedSplash({ markSource, wordmarkSource, backgroundColor, accent, onDone, style, }: AnimatedSplashProps): import("react/jsx-runtime").JSX.Element;
+export declare function AnimatedSplash({ markSource, wordmarkSource, backgroundColor, accent, onDone, style, }: AnimatedSplashProps): React.JSX.Element;

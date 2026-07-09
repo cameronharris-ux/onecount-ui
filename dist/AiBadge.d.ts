@@ -1,3 +1,4 @@
+import React from "react";
 import { type StyleProp, type TextStyle, type ViewStyle } from "react-native";
 export interface AiBadgeProps {
     label?: string;
@@ -6,4 +7,4 @@ export interface AiBadgeProps {
     textStyle?: StyleProp<TextStyle>;
     accessibilityLabel?: string;
 }
-export declare function AiBadge({ label, showIcon, style, textStyle, accessibilityLabel, }: AiBadgeProps): import("react/jsx-runtime").JSX.Element;
+export declare function AiBadge({ label, showIcon, style, textStyle, accessibilityLabel, }: AiBadgeProps): React.JSX.Element;

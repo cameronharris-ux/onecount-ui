@@ -14,4 +14,4 @@ export interface AiHeroProps {
     titleStyle?: StyleProp<TextStyle>;
     subtitleStyle?: StyleProp<TextStyle>;
 }
-export declare function AiHero({ title, subtitle, badge, children, app, scheme, aurora, style, contentStyle, titleStyle, subtitleStyle, }: AiHeroProps): import("react/jsx-runtime").JSX.Element;
+export declare function AiHero({ title, subtitle, badge, children, app, scheme, aurora, style, contentStyle, titleStyle, subtitleStyle, }: AiHeroProps): React.JSX.Element;

@@ -1,3 +1,4 @@
+import React from "react";
 import { type StyleProp, type TextStyle, type ViewStyle } from "react-native";
 import { type OneCountApp } from "./internal";
 export interface AiDisclosureProps {
@@ -7,4 +8,4 @@ export interface AiDisclosureProps {
     style?: StyleProp<ViewStyle>;
     textStyle?: StyleProp<TextStyle>;
 }
-export declare function AiDisclosure({ children, app, scheme, style, textStyle, }: AiDisclosureProps): import("react/jsx-runtime").JSX.Element;
+export declare function AiDisclosure({ children, app, scheme, style, textStyle, }: AiDisclosureProps): React.JSX.Element;
