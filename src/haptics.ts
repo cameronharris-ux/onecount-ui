@@ -26,8 +26,13 @@ function loadHaptics(): ExpoHapticsModule | null {
   }
 
   try {
-    const requireFn = (0, eval)("require") as (id: string) => ExpoHapticsModule;
-    cachedHaptics = requireFn("expo-haptics");
+    // Static require, guarded: Metro resolves it at bundle time (expo-haptics
+    // is a peer in every consumer) and jest can mock it. An eval'd require
+    // escapes BOTH module systems — under Hermes there is no runtime
+    // `require`, so the old (0, eval)("require") pattern silently no-opped
+    // every haptic in production. Keep the catch for non-RN environments.
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
+    cachedHaptics = require("expo-haptics") as ExpoHapticsModule;
   } catch {
     cachedHaptics = null;
   }
