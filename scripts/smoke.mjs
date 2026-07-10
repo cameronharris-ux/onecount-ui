@@ -60,7 +60,7 @@ for (const name of expectedExports) {
 
 const require = createRequire(import.meta.url);
 const { CORE, TOKENS_VERSION } = require("@onecount/ui-tokens");
-assert(TOKENS_VERSION === "0.3.0", "ui-tokens version did not resolve to 0.3.0");
+assert(TOKENS_VERSION === "0.4.0", "ui-tokens version did not resolve to 0.4.0");
 assert(CORE.brand.accent === CORE.identityHues.onecount, "brand accent and OneCount identity hue drifted");
 assert(CORE.brand.ai === CORE.ai, "AI core token drifted");
 assert(CORE.componentState.pressScale === CORE.motion.micro.pressScaleButton, "press scale token drifted");
