@@ -33,4 +33,8 @@ export { SPLASH_MOTIFS } from "./motifs";
 export type { SplashMotifName, MotifProps } from "./motifs";
 export { StaggerIn } from "./StaggerIn";
 export type { StaggerInProps } from "./StaggerIn";
+export { AnimatedRing } from "./AnimatedRing";
+export type { AnimatedRingProps } from "./AnimatedRing";
+export { MotionSheet } from "./MotionSheet";
+export type { MotionSheetProps } from "./MotionSheet";
 
