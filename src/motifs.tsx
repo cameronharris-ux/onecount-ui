@@ -135,7 +135,7 @@ function DrawLine({
 
 const BAR_HEIGHTS = [0.34, 0.58, 0.42, 0.66, 0.5];
 
-function BarcodeMotif({ lineColor, accent, markHeight }: MotifProps) {
+function BarcodeMotif({ lineColor, markHeight }: MotifProps) {
   const { build, pulse } = useMotifClock();
   const gap = Math.round(markHeight * 0.11);
   // Clear the mark (width ≈ 0.73 × height) plus breathing room on each side.
@@ -165,23 +165,6 @@ function BarcodeMotif({ lineColor, accent, markHeight }: MotifProps) {
         {group(-1)}
         {group(1)}
       </View>
-      {/* Static offset lives on the wrapper: BuildIn owns its own transform. */}
-      <View
-        style={[
-          styles.absCenter,
-          { transform: [{ translateX: clearance * 0.62 }, { translateY: -markHeight * 0.36 }] },
-        ]}
-      >
-        <BuildIn
-          build={build}
-          pulse={pulse}
-          index={BAR_HEIGHTS.length - 1}
-          count={BAR_HEIGHTS.length}
-          baseOpacity={0.9}
-          fromTranslateY={-8}
-          style={[styles.dotStatic, { backgroundColor: accent }]}
-        />
-      </View>
     </View>
   );
 }
@@ -192,16 +175,38 @@ function BarcodeMotif({ lineColor, accent, markHeight }: MotifProps) {
 
 function BoundaryMotif({ lineColor, accent, markHeight }: MotifProps) {
   const { build, pulse } = useMotifClock();
-  const boxW = markHeight * 0.98;
-  const boxH = markHeight * 1.3;
+  const boxW = markHeight * 1.06;
+  const boxH = markHeight * 1.26;
   const arm = Math.round(markHeight * 0.16);
   const thick = 2;
+  const radius = 10;
 
-  const corners: Array<{ key: string; pos: ViewStyle; out: [number, number] }> = [
-    { key: "tl", pos: { left: 0, top: 0 }, out: [-10, -10] },
-    { key: "tr", pos: { right: 0, top: 0 }, out: [10, -10] },
-    { key: "bl", pos: { left: 0, bottom: 0 }, out: [-10, 10] },
-    { key: "br", pos: { right: 0, bottom: 0 }, out: [10, 10] },
+  // Each corner bracket is one View drawing exactly two borders.
+  const corners: Array<{ key: string; pos: ViewStyle; border: ViewStyle; out: [number, number] }> = [
+    {
+      key: "tl",
+      pos: { left: 0, top: 0 },
+      border: { borderTopWidth: thick, borderLeftWidth: thick, borderTopLeftRadius: radius },
+      out: [-10, -10],
+    },
+    {
+      key: "tr",
+      pos: { right: 0, top: 0 },
+      border: { borderTopWidth: thick, borderRightWidth: thick, borderTopRightRadius: radius },
+      out: [10, -10],
+    },
+    {
+      key: "bl",
+      pos: { left: 0, bottom: 0 },
+      border: { borderBottomWidth: thick, borderLeftWidth: thick, borderBottomLeftRadius: radius },
+      out: [-10, 10],
+    },
+    {
+      key: "br",
+      pos: { right: 0, bottom: 0 },
+      border: { borderBottomWidth: thick, borderRightWidth: thick, borderBottomRightRadius: radius },
+      out: [10, 10],
+    },
   ];
 
   const ringStyle = useAnimatedStyle(() => ({
@@ -223,26 +228,8 @@ function BoundaryMotif({ lineColor, accent, markHeight }: MotifProps) {
             pulseOpacity={0.5}
             fromTranslateX={corner.out[0]}
             fromTranslateY={corner.out[1]}
-            style={[{ position: "absolute" }, corner.pos]}
-          >
-            <View
-              style={{
-                width: arm,
-                height: thick,
-                backgroundColor: lineColor,
-                alignSelf: corner.pos.right != null ? "flex-end" : "flex-start",
-              }}
-            />
-            <View
-              style={{
-                width: thick,
-                height: arm - thick,
-                backgroundColor: lineColor,
-                alignSelf: corner.pos.right != null ? "flex-end" : "flex-start",
-                marginTop: corner.pos.bottom != null ? -(arm - thick) - thick : 0,
-              }}
-            />
-          </BuildIn>
+            style={[{ position: "absolute", width: arm, height: arm, borderColor: lineColor }, corner.pos, corner.border]}
+          />
         ))}
         <Animated.View
           style={[
@@ -262,7 +249,8 @@ function BoundaryMotif({ lineColor, accent, markHeight }: MotifProps) {
 
 function TraceMotif({ lineColor, accent, markHeight }: MotifProps) {
   const { build, pulse } = useMotifClock();
-  const y = markHeight * 0.78;
+  // Above the mark — the identity text owns the space below it.
+  const y = -markHeight * 0.92;
   const span = markHeight * 0.42;
   const nodes = [-1, 0, 1];
 
@@ -316,14 +304,16 @@ function TraceMotif({ lineColor, accent, markHeight }: MotifProps) {
 
 function WorkflowMotif({ lineColor, accent, markHeight }: MotifProps) {
   const { build, pulse } = useMotifClock();
-  const r = markHeight * 0.82;
+  // Corners of a square large enough to frame the mark AND the identity text
+  // as one organised system — no edge crosses the mark or the type.
+  const d = markHeight * 1.15;
   const positions = [
-    { x: 0, y: -r },
-    { x: r, y: 0 },
-    { x: 0, y: r },
-    { x: -r, y: 0 },
+    { x: -d, y: -d },
+    { x: d, y: -d },
+    { x: d, y: d },
+    { x: -d, y: d },
   ];
-  const edgeLen = Math.sqrt(2) * r;
+  const edgeLen = 2 * d;
 
   return (
     <View pointerEvents="none" style={[styles.fill, styles.center]}>

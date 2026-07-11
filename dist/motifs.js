@@ -99,48 +99,56 @@ function DrawLine({ build, index, count, baseOpacity, style, }) {
 // OneCount — barcode field
 // ---------------------------------------------------------------------------
 const BAR_HEIGHTS = [0.34, 0.58, 0.42, 0.66, 0.5];
-function BarcodeMotif({ lineColor, accent, markHeight }) {
+function BarcodeMotif({ lineColor, markHeight }) {
     const { build, pulse } = useMotifClock();
     const gap = Math.round(markHeight * 0.11);
     // Clear the mark (width ≈ 0.73 × height) plus breathing room on each side.
     const clearance = Math.round(markHeight * 0.73 + markHeight * 0.34);
     const group = (dir) => ((0, jsx_runtime_1.jsx)(react_native_1.View, { style: [styles.rowCenter, { gap }], children: BAR_HEIGHTS.map((h, i) => ((0, jsx_runtime_1.jsx)(BuildIn, { build: build, pulse: pulse, index: dir === -1 ? BAR_HEIGHTS.length - 1 - i : i, count: BAR_HEIGHTS.length, baseOpacity: 0.16, pulseOpacity: 0.34, fromTranslateY: (i % 2 === 0 ? -1 : 1) * 14, style: { width: 2, height: markHeight * h, borderRadius: 1, backgroundColor: lineColor } }, i))) }));
-    return ((0, jsx_runtime_1.jsxs)(react_native_1.View, { pointerEvents: "none", style: [styles.fill, styles.center], children: [(0, jsx_runtime_1.jsxs)(react_native_1.View, { style: [styles.rowCenter, { gap: clearance }], children: [group(-1), group(1)] }), (0, jsx_runtime_1.jsx)(react_native_1.View, { style: [
-                    styles.absCenter,
-                    { transform: [{ translateX: clearance * 0.62 }, { translateY: -markHeight * 0.36 }] },
-                ], children: (0, jsx_runtime_1.jsx)(BuildIn, { build: build, pulse: pulse, index: BAR_HEIGHTS.length - 1, count: BAR_HEIGHTS.length, baseOpacity: 0.9, fromTranslateY: -8, style: [styles.dotStatic, { backgroundColor: accent }] }) })] }));
+    return ((0, jsx_runtime_1.jsx)(react_native_1.View, { pointerEvents: "none", style: [styles.fill, styles.center], children: (0, jsx_runtime_1.jsxs)(react_native_1.View, { style: [styles.rowCenter, { gap: clearance }], children: [group(-1), group(1)] }) }));
 }
 // ---------------------------------------------------------------------------
 // Shield — boundary brackets + one ring pulse
 // ---------------------------------------------------------------------------
 function BoundaryMotif({ lineColor, accent, markHeight }) {
     const { build, pulse } = useMotifClock();
-    const boxW = markHeight * 0.98;
-    const boxH = markHeight * 1.3;
+    const boxW = markHeight * 1.06;
+    const boxH = markHeight * 1.26;
     const arm = Math.round(markHeight * 0.16);
     const thick = 2;
+    const radius = 10;
+    // Each corner bracket is one View drawing exactly two borders.
     const corners = [
-        { key: "tl", pos: { left: 0, top: 0 }, out: [-10, -10] },
-        { key: "tr", pos: { right: 0, top: 0 }, out: [10, -10] },
-        { key: "bl", pos: { left: 0, bottom: 0 }, out: [-10, 10] },
-        { key: "br", pos: { right: 0, bottom: 0 }, out: [10, 10] },
+        {
+            key: "tl",
+            pos: { left: 0, top: 0 },
+            border: { borderTopWidth: thick, borderLeftWidth: thick, borderTopLeftRadius: radius },
+            out: [-10, -10],
+        },
+        {
+            key: "tr",
+            pos: { right: 0, top: 0 },
+            border: { borderTopWidth: thick, borderRightWidth: thick, borderTopRightRadius: radius },
+            out: [10, -10],
+        },
+        {
+            key: "bl",
+            pos: { left: 0, bottom: 0 },
+            border: { borderBottomWidth: thick, borderLeftWidth: thick, borderBottomLeftRadius: radius },
+            out: [-10, 10],
+        },
+        {
+            key: "br",
+            pos: { right: 0, bottom: 0 },
+            border: { borderBottomWidth: thick, borderRightWidth: thick, borderBottomRightRadius: radius },
+            out: [10, 10],
+        },
     ];
     const ringStyle = (0, react_native_reanimated_1.useAnimatedStyle)(() => ({
         opacity: pulse.value * 0.25,
         transform: [{ scale: 1 + pulse.value * 0.12 }],
     }));
-    return ((0, jsx_runtime_1.jsx)(react_native_1.View, { pointerEvents: "none", style: [styles.fill, styles.center], children: (0, jsx_runtime_1.jsxs)(react_native_1.View, { style: { width: boxW, height: boxH }, children: [corners.map((corner, i) => ((0, jsx_runtime_1.jsxs)(BuildIn, { build: build, pulse: pulse, index: i, count: 4, baseOpacity: 0.32, pulseOpacity: 0.5, fromTranslateX: corner.out[0], fromTranslateY: corner.out[1], style: [{ position: "absolute" }, corner.pos], children: [(0, jsx_runtime_1.jsx)(react_native_1.View, { style: {
-                                width: arm,
-                                height: thick,
-                                backgroundColor: lineColor,
-                                alignSelf: corner.pos.right != null ? "flex-end" : "flex-start",
-                            } }), (0, jsx_runtime_1.jsx)(react_native_1.View, { style: {
-                                width: thick,
-                                height: arm - thick,
-                                backgroundColor: lineColor,
-                                alignSelf: corner.pos.right != null ? "flex-end" : "flex-start",
-                                marginTop: corner.pos.bottom != null ? -(arm - thick) - thick : 0,
-                            } })] }, corner.key))), (0, jsx_runtime_1.jsx)(react_native_reanimated_1.default.View, { style: [
+    return ((0, jsx_runtime_1.jsx)(react_native_1.View, { pointerEvents: "none", style: [styles.fill, styles.center], children: (0, jsx_runtime_1.jsxs)(react_native_1.View, { style: { width: boxW, height: boxH }, children: [corners.map((corner, i) => ((0, jsx_runtime_1.jsx)(BuildIn, { build: build, pulse: pulse, index: i, count: 4, baseOpacity: 0.32, pulseOpacity: 0.5, fromTranslateX: corner.out[0], fromTranslateY: corner.out[1], style: [{ position: "absolute", width: arm, height: arm, borderColor: lineColor }, corner.pos, corner.border] }, corner.key))), (0, jsx_runtime_1.jsx)(react_native_reanimated_1.default.View, { style: [
                         react_native_1.StyleSheet.absoluteFill,
                         { borderWidth: 1.5, borderColor: accent, borderRadius: markHeight * 0.16 },
                         ringStyle,
@@ -151,7 +159,8 @@ function BoundaryMotif({ lineColor, accent, markHeight }) {
 // ---------------------------------------------------------------------------
 function TraceMotif({ lineColor, accent, markHeight }) {
     const { build, pulse } = useMotifClock();
-    const y = markHeight * 0.78;
+    // Above the mark — the identity text owns the space below it.
+    const y = -markHeight * 0.92;
     const span = markHeight * 0.42;
     const nodes = [-1, 0, 1];
     return ((0, jsx_runtime_1.jsx)(react_native_1.View, { pointerEvents: "none", style: [styles.fill, styles.center], children: (0, jsx_runtime_1.jsxs)(react_native_1.View, { style: { top: y, width: span * 2 + 24, height: 8, justifyContent: "center" }, children: [nodes.slice(0, -1).map((n, i) => ((0, jsx_runtime_1.jsx)(DrawLine, { build: build, index: i * 2 + 1, count: 5, baseOpacity: 0.3, style: {
@@ -175,14 +184,16 @@ function TraceMotif({ lineColor, accent, markHeight }) {
 // ---------------------------------------------------------------------------
 function WorkflowMotif({ lineColor, accent, markHeight }) {
     const { build, pulse } = useMotifClock();
-    const r = markHeight * 0.82;
+    // Corners of a square large enough to frame the mark AND the identity text
+    // as one organised system — no edge crosses the mark or the type.
+    const d = markHeight * 1.15;
     const positions = [
-        { x: 0, y: -r },
-        { x: r, y: 0 },
-        { x: 0, y: r },
-        { x: -r, y: 0 },
+        { x: -d, y: -d },
+        { x: d, y: -d },
+        { x: d, y: d },
+        { x: -d, y: d },
     ];
-    const edgeLen = Math.sqrt(2) * r;
+    const edgeLen = 2 * d;
     return ((0, jsx_runtime_1.jsx)(react_native_1.View, { pointerEvents: "none", style: [styles.fill, styles.center], children: (0, jsx_runtime_1.jsxs)(react_native_1.View, { style: { width: 0, height: 0 }, children: [positions.map((pos, i) => {
                     const next = positions[(i + 1) % positions.length];
                     const angle = (Math.atan2(next.y - pos.y, next.x - pos.x) * 180) / Math.PI;
