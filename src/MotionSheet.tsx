@@ -40,6 +40,8 @@ export interface MotionSheetProps {
   children?: React.ReactNode;
   /** Peak backdrop opacity; defaults to the MOTION.opacity.backdrop token. */
   backdropOpacity?: number;
+  /** Screen-reader label for the tap-outside-to-dismiss backdrop. */
+  backdropAccessibilityLabel?: string;
   sheetStyle?: StyleProp<ViewStyle>;
   contentContainerStyle?: StyleProp<ViewStyle>;
   testID?: string;
@@ -50,6 +52,7 @@ export function MotionSheet({
   onRequestClose,
   children,
   backdropOpacity: backdropOpacityProp,
+  backdropAccessibilityLabel = "Close",
   sheetStyle,
   contentContainerStyle,
   testID,
@@ -127,7 +130,7 @@ export function MotionSheet({
         <Animated.View style={[StyleSheet.absoluteFillObject, styles.backdrop, backdropStyle]}>
           <Pressable
             accessibilityRole="button"
-            accessibilityLabel="Close"
+            accessibilityLabel={backdropAccessibilityLabel}
             style={StyleSheet.absoluteFillObject}
             onPress={handleRequestClose}
           />

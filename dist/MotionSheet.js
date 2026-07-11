@@ -60,7 +60,7 @@ const useReducedMotion_1 = require("./useReducedMotion");
 // Modal scrim: a neutral black dim, independent of any app/brand theme —
 // there is no token for it because every product dims the same way.
 const SCRIM_COLOR = "#000";
-function MotionSheet({ visible, onRequestClose, children, backdropOpacity: backdropOpacityProp, sheetStyle, contentContainerStyle, testID, }) {
+function MotionSheet({ visible, onRequestClose, children, backdropOpacity: backdropOpacityProp, backdropAccessibilityLabel = "Close", sheetStyle, contentContainerStyle, testID, }) {
     const reducedMotion = (0, useReducedMotion_1.useReducedMotion)();
     const { height: windowHeight } = (0, react_native_1.useWindowDimensions)();
     // The Modal must stay visible through the exit animation, so "mounted" is
@@ -121,7 +121,7 @@ function MotionSheet({ visible, onRequestClose, children, backdropOpacity: backd
     if (!mounted) {
         return null;
     }
-    return ((0, jsx_runtime_1.jsx)(react_native_1.Modal, { transparent: true, animationType: "none", statusBarTranslucent: true, visible: mounted, onRequestClose: handleRequestClose, testID: testID, children: (0, jsx_runtime_1.jsxs)(react_native_1.View, { style: react_native_1.StyleSheet.absoluteFillObject, children: [(0, jsx_runtime_1.jsx)(react_native_reanimated_1.default.View, { style: [react_native_1.StyleSheet.absoluteFillObject, styles.backdrop, backdropStyle], children: (0, jsx_runtime_1.jsx)(react_native_1.Pressable, { accessibilityRole: "button", accessibilityLabel: "Close", style: react_native_1.StyleSheet.absoluteFillObject, onPress: handleRequestClose }) }), (0, jsx_runtime_1.jsx)(react_native_reanimated_1.default.View, { style: [styles.sheetContainer, sheetStyle, sheetAnimatedStyle], children: (0, jsx_runtime_1.jsx)(react_native_1.View, { style: contentContainerStyle, children: children }) })] }) }));
+    return ((0, jsx_runtime_1.jsx)(react_native_1.Modal, { transparent: true, animationType: "none", statusBarTranslucent: true, visible: mounted, onRequestClose: handleRequestClose, testID: testID, children: (0, jsx_runtime_1.jsxs)(react_native_1.View, { style: react_native_1.StyleSheet.absoluteFillObject, children: [(0, jsx_runtime_1.jsx)(react_native_reanimated_1.default.View, { style: [react_native_1.StyleSheet.absoluteFillObject, styles.backdrop, backdropStyle], children: (0, jsx_runtime_1.jsx)(react_native_1.Pressable, { accessibilityRole: "button", accessibilityLabel: backdropAccessibilityLabel, style: react_native_1.StyleSheet.absoluteFillObject, onPress: handleRequestClose }) }), (0, jsx_runtime_1.jsx)(react_native_reanimated_1.default.View, { style: [styles.sheetContainer, sheetStyle, sheetAnimatedStyle], children: (0, jsx_runtime_1.jsx)(react_native_1.View, { style: contentContainerStyle, children: children }) })] }) }));
 }
 const styles = react_native_1.StyleSheet.create({
     backdrop: {

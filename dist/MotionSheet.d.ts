@@ -23,8 +23,10 @@ export interface MotionSheetProps {
     children?: React.ReactNode;
     /** Peak backdrop opacity; defaults to the MOTION.opacity.backdrop token. */
     backdropOpacity?: number;
+    /** Screen-reader label for the tap-outside-to-dismiss backdrop. */
+    backdropAccessibilityLabel?: string;
     sheetStyle?: StyleProp<ViewStyle>;
     contentContainerStyle?: StyleProp<ViewStyle>;
     testID?: string;
 }
-export declare function MotionSheet({ visible, onRequestClose, children, backdropOpacity: backdropOpacityProp, sheetStyle, contentContainerStyle, testID, }: MotionSheetProps): React.JSX.Element | null;
+export declare function MotionSheet({ visible, onRequestClose, children, backdropOpacity: backdropOpacityProp, backdropAccessibilityLabel, sheetStyle, contentContainerStyle, testID, }: MotionSheetProps): React.JSX.Element | null;
