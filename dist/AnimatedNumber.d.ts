@@ -4,6 +4,7 @@ export interface AnimatedNumberProps extends Omit<TextProps, "children"> {
     value: number;
     prefix?: string;
     suffix?: string;
+    /** Defaults to the data-reveal motion token. */
     durationMs?: number;
     style?: StyleProp<TextStyle>;
     mono?: boolean;

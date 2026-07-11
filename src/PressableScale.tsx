@@ -3,14 +3,17 @@ import { Pressable, type PressableProps, type StyleProp, type ViewStyle } from "
 import Animated, { useAnimatedStyle, useSharedValue, withSpring } from "react-native-reanimated";
 import { CORE } from "@onecount/ui-tokens";
 
-const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
+import { hapticMoment, type HapticMoment } from "./haptics";
+import { SPRING } from "./motion";
+import { useReducedMotion } from "./useReducedMotion";
 
-const PRESS_SPRING = { damping: 18, stiffness: 320, mass: 0.6 } as const;
-const RELEASE_SPRING = { damping: 14, stiffness: 220, mass: 0.7 } as const;
+const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
 export interface PressableScaleProps extends Omit<PressableProps, "style"> {
   pressedScale?: number;
   pressedOpacity?: number;
+  /** Fire this haptic moment on press-in (opt-in; keep off high-frequency rows). */
+  haptic?: HapticMoment;
   style?: StyleProp<ViewStyle>;
   children?: React.ReactNode;
 }
@@ -18,6 +21,7 @@ export interface PressableScaleProps extends Omit<PressableProps, "style"> {
 export function PressableScale({
   pressedScale = CORE.componentState.pressScale,
   pressedOpacity = CORE.componentState.pressOpacity,
+  haptic,
   disabled,
   onPressIn,
   onPressOut,
@@ -26,31 +30,34 @@ export function PressableScale({
   ...rest
 }: PressableScaleProps) {
   const pressed = useSharedValue(0);
+  const reducedMotion = useReducedMotion();
   const disabledOpacity = CORE.componentState.disabledOpacity;
 
   const animatedStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: 1 + pressed.value * (pressedScale - 1) }],
+    transform: [{ scale: reducedMotion ? 1 : 1 + pressed.value * (pressedScale - 1) }],
+    // Opacity press feedback is state, not motion — it survives reduced motion.
     opacity: disabled ? disabledOpacity : 1 + pressed.value * (pressedOpacity - 1),
   }));
 
   const handlePressIn = useCallback<NonNullable<PressableProps["onPressIn"]>>(
     (event) => {
       if (!disabled) {
-        pressed.value = withSpring(1, PRESS_SPRING);
+        pressed.value = reducedMotion ? 1 : withSpring(1, SPRING.press);
+        if (haptic) void hapticMoment(haptic);
       }
       onPressIn?.(event);
     },
-    [disabled, onPressIn, pressed],
+    [disabled, haptic, onPressIn, pressed, reducedMotion],
   );
 
   const handlePressOut = useCallback<NonNullable<PressableProps["onPressOut"]>>(
     (event) => {
       if (!disabled) {
-        pressed.value = withSpring(0, RELEASE_SPRING);
+        pressed.value = reducedMotion ? 0 : withSpring(0, SPRING.release);
       }
       onPressOut?.(event);
     },
-    [disabled, onPressOut, pressed],
+    [disabled, onPressOut, pressed, reducedMotion],
   );
 
   return (
@@ -65,4 +72,3 @@ export function PressableScale({
     </AnimatedPressable>
   );
 }
-

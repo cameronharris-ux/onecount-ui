@@ -16,6 +16,7 @@ type ExpoHapticsModule = {
   };
   impactAsync?: (style: unknown) => Promise<void>;
   notificationAsync?: (type: unknown) => Promise<void>;
+  selectionAsync?: () => Promise<void>;
 };
 
 let cachedHaptics: ExpoHapticsModule | null | undefined;
@@ -52,6 +53,10 @@ export async function hapticMoment(moment: HapticMoment): Promise<void> {
   }
 
   try {
+    if (strength === "selection") {
+      await haptics.selectionAsync?.();
+      return;
+    }
     if (strength === "success") {
       await haptics.notificationAsync?.(haptics.NotificationFeedbackType?.Success ?? "success");
       return;

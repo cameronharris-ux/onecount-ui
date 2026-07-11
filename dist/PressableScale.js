@@ -39,27 +39,32 @@ const react_1 = require("react");
 const react_native_1 = require("react-native");
 const react_native_reanimated_1 = __importStar(require("react-native-reanimated"));
 const ui_tokens_1 = require("@onecount/ui-tokens");
+const haptics_1 = require("./haptics");
+const motion_1 = require("./motion");
+const useReducedMotion_1 = require("./useReducedMotion");
 const AnimatedPressable = react_native_reanimated_1.default.createAnimatedComponent(react_native_1.Pressable);
-const PRESS_SPRING = { damping: 18, stiffness: 320, mass: 0.6 };
-const RELEASE_SPRING = { damping: 14, stiffness: 220, mass: 0.7 };
-function PressableScale({ pressedScale = ui_tokens_1.CORE.componentState.pressScale, pressedOpacity = ui_tokens_1.CORE.componentState.pressOpacity, disabled, onPressIn, onPressOut, style, children, ...rest }) {
+function PressableScale({ pressedScale = ui_tokens_1.CORE.componentState.pressScale, pressedOpacity = ui_tokens_1.CORE.componentState.pressOpacity, haptic, disabled, onPressIn, onPressOut, style, children, ...rest }) {
     const pressed = (0, react_native_reanimated_1.useSharedValue)(0);
+    const reducedMotion = (0, useReducedMotion_1.useReducedMotion)();
     const disabledOpacity = ui_tokens_1.CORE.componentState.disabledOpacity;
     const animatedStyle = (0, react_native_reanimated_1.useAnimatedStyle)(() => ({
-        transform: [{ scale: 1 + pressed.value * (pressedScale - 1) }],
+        transform: [{ scale: reducedMotion ? 1 : 1 + pressed.value * (pressedScale - 1) }],
+        // Opacity press feedback is state, not motion — it survives reduced motion.
         opacity: disabled ? disabledOpacity : 1 + pressed.value * (pressedOpacity - 1),
     }));
     const handlePressIn = (0, react_1.useCallback)((event) => {
         if (!disabled) {
-            pressed.value = (0, react_native_reanimated_1.withSpring)(1, PRESS_SPRING);
+            pressed.value = reducedMotion ? 1 : (0, react_native_reanimated_1.withSpring)(1, motion_1.SPRING.press);
+            if (haptic)
+                void (0, haptics_1.hapticMoment)(haptic);
         }
         onPressIn === null || onPressIn === void 0 ? void 0 : onPressIn(event);
-    }, [disabled, onPressIn, pressed]);
+    }, [disabled, haptic, onPressIn, pressed, reducedMotion]);
     const handlePressOut = (0, react_1.useCallback)((event) => {
         if (!disabled) {
-            pressed.value = (0, react_native_reanimated_1.withSpring)(0, RELEASE_SPRING);
+            pressed.value = reducedMotion ? 0 : (0, react_native_reanimated_1.withSpring)(0, motion_1.SPRING.release);
         }
         onPressOut === null || onPressOut === void 0 ? void 0 : onPressOut(event);
-    }, [disabled, onPressOut, pressed]);
+    }, [disabled, onPressOut, pressed, reducedMotion]);
     return ((0, jsx_runtime_1.jsx)(AnimatedPressable, { ...rest, disabled: disabled, onPressIn: handlePressIn, onPressOut: handlePressOut, style: [animatedStyle, style], children: children }));
 }

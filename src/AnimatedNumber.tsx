@@ -1,11 +1,14 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Text, type StyleProp, type TextProps, type TextStyle } from "react-native";
-import { CORE } from "@onecount/ui-tokens";
+import { CORE, MOTION } from "@onecount/ui-tokens";
+
+import { useReducedMotion } from "./useReducedMotion";
 
 export interface AnimatedNumberProps extends Omit<TextProps, "children"> {
   value: number;
   prefix?: string;
   suffix?: string;
+  /** Defaults to the data-reveal motion token. */
   durationMs?: number;
   style?: StyleProp<TextStyle>;
   mono?: boolean;
@@ -20,12 +23,13 @@ export function AnimatedNumber({
   value,
   prefix = "",
   suffix = "",
-  durationMs = 700,
+  durationMs = MOTION.duration.data,
   style,
   mono = true,
   formatValue,
   ...rest
 }: AnimatedNumberProps) {
+  const reducedMotion = useReducedMotion();
   const [shown, setShown] = useState(value);
   const shownRef = useRef(value);
   shownRef.current = shown;
@@ -33,6 +37,11 @@ export function AnimatedNumber({
   useEffect(() => {
     const from = shownRef.current;
     if (from === value) return;
+
+    if (reducedMotion) {
+      setShown(value);
+      return;
+    }
 
     let frame = 0;
     const start = Date.now();
@@ -47,7 +56,7 @@ export function AnimatedNumber({
 
     frame = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(frame);
-  }, [durationMs, value]);
+  }, [durationMs, reducedMotion, value]);
 
   return (
     <Text
