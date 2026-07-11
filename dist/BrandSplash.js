@@ -120,7 +120,7 @@ function AssemblingSegment({ segment, unit, color, index, reducedMotion, }) {
             animatedStyle,
         ] }));
 }
-function BrandSplash({ app, productName, descriptor, motif, backgroundColor, accent, haptics = true, onDone, style, }) {
+function BrandSplash({ app, productName, descriptor, motif, backgroundColor, accent, haptics = true, autoHide = true, dismiss = false, onDone, style, }) {
     var _a, _b;
     const reducedMotion = (0, useReducedMotion_1.useReducedMotion)();
     const { theme, themeName } = (0, ui_tokens_1.themeForApp)(app);
@@ -159,10 +159,12 @@ function BrandSplash({ app, productName, descriptor, motif, backgroundColor, acc
             nameY.value = 0;
             descOpacity.value = descriptor ? 1 : 0;
             root.value = 0;
-            root.value = (0, react_native_reanimated_1.withSequence)((0, react_native_reanimated_1.withTiming)(1, { duration: motion_1.DUR.fast, easing: motion_1.EASE.standard }), (0, react_native_reanimated_1.withDelay)(400, (0, react_native_reanimated_1.withTiming)(0, { duration: motion_1.DUR.standard, easing: motion_1.EASE.exit }, (done) => {
-                if (done)
-                    (0, react_native_reanimated_1.runOnJS)(finish)();
-            })));
+            root.value = autoHide
+                ? (0, react_native_reanimated_1.withSequence)((0, react_native_reanimated_1.withTiming)(1, { duration: motion_1.DUR.fast, easing: motion_1.EASE.standard }), (0, react_native_reanimated_1.withDelay)(400, (0, react_native_reanimated_1.withTiming)(0, { duration: motion_1.DUR.standard, easing: motion_1.EASE.exit }, (done) => {
+                    if (done)
+                        (0, react_native_reanimated_1.runOnJS)(finish)();
+                })))
+                : (0, react_native_reanimated_1.withTiming)(1, { duration: motion_1.DUR.fast, easing: motion_1.EASE.standard });
             const hold = setTimeout(lockIn, motion_1.DUR.fast);
             return () => {
                 cancelled = true;
@@ -174,7 +176,9 @@ function BrandSplash({ app, productName, descriptor, motif, backgroundColor, acc
         // stage 5's gentle zoom-through chained after the spring lands (sequenced:
         // a second .value assignment would cancel the spring).
         const handoffDurForScale = STAGES.handoff[1] - STAGES.handoff[0];
-        markScale.value = (0, react_native_reanimated_1.withSequence)((0, react_native_reanimated_1.withDelay)(STAGES.lockIn[0], (0, react_native_reanimated_1.withSpring)(1, motion_1.SPRING.precise)), (0, react_native_reanimated_1.withTiming)(1.04, { duration: handoffDurForScale, easing: motion_1.EASE.standard }));
+        markScale.value = autoHide
+            ? (0, react_native_reanimated_1.withSequence)((0, react_native_reanimated_1.withDelay)(STAGES.lockIn[0], (0, react_native_reanimated_1.withSpring)(1, motion_1.SPRING.precise)), (0, react_native_reanimated_1.withTiming)(1.04, { duration: handoffDurForScale, easing: motion_1.EASE.standard }))
+            : (0, react_native_reanimated_1.withDelay)(STAGES.lockIn[0], (0, react_native_reanimated_1.withSpring)(1, motion_1.SPRING.precise));
         const hapticTimer = setTimeout(lockIn, STAGES.lockIn[0]);
         // Stage 4 — identity.
         const identityDur = STAGES.identity[1] - STAGES.identity[0];
@@ -182,11 +186,15 @@ function BrandSplash({ app, productName, descriptor, motif, backgroundColor, acc
         nameY.value = (0, react_native_reanimated_1.withDelay)(STAGES.identity[0], (0, react_native_reanimated_1.withTiming)(0, { duration: identityDur, easing: motion_1.EASE.standard }));
         descOpacity.value = (0, react_native_reanimated_1.withDelay)(STAGES.identity[0] + 60, (0, react_native_reanimated_1.withTiming)(1, { duration: identityDur, easing: motion_1.EASE.standard }));
         // Stage 5 — handoff: fade out over the already-rendered app beneath.
-        const handoffDur = STAGES.handoff[1] - STAGES.handoff[0];
-        root.value = (0, react_native_reanimated_1.withDelay)(STAGES.handoff[0], (0, react_native_reanimated_1.withTiming)(0, { duration: handoffDur, easing: motion_1.EASE.exit }, (done) => {
-            if (done)
-                (0, react_native_reanimated_1.runOnJS)(finish)();
-        }));
+        // With autoHide=false the overlay holds after identity; the `dismiss`
+        // effect below runs the handoff when the caller is ready.
+        if (autoHide) {
+            const handoffDur = STAGES.handoff[1] - STAGES.handoff[0];
+            root.value = (0, react_native_reanimated_1.withDelay)(STAGES.handoff[0], (0, react_native_reanimated_1.withTiming)(0, { duration: handoffDur, easing: motion_1.EASE.exit }, (done) => {
+                if (done)
+                    (0, react_native_reanimated_1.runOnJS)(finish)();
+            }));
+        }
         return () => {
             cancelled = true;
             clearTimeout(hapticTimer);
@@ -196,7 +204,19 @@ function BrandSplash({ app, productName, descriptor, motif, backgroundColor, acc
             (0, react_native_reanimated_1.cancelAnimation)(nameY);
             (0, react_native_reanimated_1.cancelAnimation)(descOpacity);
         };
-    }, [descriptor, haptics, onDone, reducedMotion, root, markScale, nameOpacity, nameY, descOpacity]);
+    }, [autoHide, descriptor, haptics, onDone, reducedMotion, root, markScale, nameOpacity, nameY, descOpacity]);
+    // Caller-driven handoff for autoHide=false boot screens.
+    const dismissed = (0, react_native_reanimated_1.useSharedValue)(false);
+    (0, react_1.useEffect)(() => {
+        if (autoHide || !dismiss || dismissed.value)
+            return;
+        dismissed.value = true;
+        const finish = () => onDone === null || onDone === void 0 ? void 0 : onDone();
+        root.value = (0, react_native_reanimated_1.withTiming)(0, { duration: Math.round(motion_1.DUR.nav * ui_tokens_1.MOTION.exitRatio), easing: motion_1.EASE.exit }, (done) => {
+            if (done)
+                (0, react_native_reanimated_1.runOnJS)(finish)();
+        });
+    }, [autoHide, dismiss, dismissed, onDone, root]);
     const rootStyle = (0, react_native_reanimated_1.useAnimatedStyle)(() => ({ opacity: root.value }));
     const markWrapStyle = (0, react_native_reanimated_1.useAnimatedStyle)(() => ({ transform: [{ scale: markScale.value }] }));
     const nameStyle = (0, react_native_reanimated_1.useAnimatedStyle)(() => ({

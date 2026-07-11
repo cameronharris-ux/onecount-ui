@@ -32,7 +32,15 @@ export interface BrandSplashProps {
     accent?: string;
     /** Fire the brand-lock-in haptic at mark settle (default true, one per mount). */
     haptics?: boolean;
+    /**
+     * When false, stages 1–4 play and the overlay HOLDS (no stage-5 fade); the
+     * caller later flips `dismiss` to run the handoff. For boot screens that
+     * must persist until the app is actually ready. Default true.
+     */
+    autoHide?: boolean;
+    /** With autoHide=false: flip to true to run the stage-5 handoff now. */
+    dismiss?: boolean;
     onDone?: () => void;
     style?: StyleProp<ViewStyle>;
 }
-export declare function BrandSplash({ app, productName, descriptor, motif, backgroundColor, accent, haptics, onDone, style, }: BrandSplashProps): React.JSX.Element;
+export declare function BrandSplash({ app, productName, descriptor, motif, backgroundColor, accent, haptics, autoHide, dismiss, onDone, style, }: BrandSplashProps): React.JSX.Element;

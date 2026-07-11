@@ -133,6 +133,14 @@ export interface BrandSplashProps {
   accent?: string;
   /** Fire the brand-lock-in haptic at mark settle (default true, one per mount). */
   haptics?: boolean;
+  /**
+   * When false, stages 1–4 play and the overlay HOLDS (no stage-5 fade); the
+   * caller later flips `dismiss` to run the handoff. For boot screens that
+   * must persist until the app is actually ready. Default true.
+   */
+  autoHide?: boolean;
+  /** With autoHide=false: flip to true to run the stage-5 handoff now. */
+  dismiss?: boolean;
   onDone?: () => void;
   style?: StyleProp<ViewStyle>;
 }
@@ -145,6 +153,8 @@ export function BrandSplash({
   backgroundColor,
   accent,
   haptics = true,
+  autoHide = true,
+  dismiss = false,
   onDone,
   style,
 }: BrandSplashProps) {
@@ -188,15 +198,17 @@ export function BrandSplash({
       nameY.value = 0;
       descOpacity.value = descriptor ? 1 : 0;
       root.value = 0;
-      root.value = withSequence(
-        withTiming(1, { duration: DUR.fast, easing: EASE.standard }),
-        withDelay(
-          400,
-          withTiming(0, { duration: DUR.standard, easing: EASE.exit }, (done) => {
-            if (done) runOnJS(finish)();
-          }),
-        ),
-      );
+      root.value = autoHide
+        ? withSequence(
+            withTiming(1, { duration: DUR.fast, easing: EASE.standard }),
+            withDelay(
+              400,
+              withTiming(0, { duration: DUR.standard, easing: EASE.exit }, (done) => {
+                if (done) runOnJS(finish)();
+              }),
+            ),
+          )
+        : withTiming(1, { duration: DUR.fast, easing: EASE.standard });
       const hold = setTimeout(lockIn, DUR.fast);
       return () => {
         cancelled = true;
@@ -209,10 +221,12 @@ export function BrandSplash({
     // stage 5's gentle zoom-through chained after the spring lands (sequenced:
     // a second .value assignment would cancel the spring).
     const handoffDurForScale = STAGES.handoff[1] - STAGES.handoff[0];
-    markScale.value = withSequence(
-      withDelay(STAGES.lockIn[0], withSpring(1, SPRING.precise)),
-      withTiming(1.04, { duration: handoffDurForScale, easing: EASE.standard }),
-    );
+    markScale.value = autoHide
+      ? withSequence(
+          withDelay(STAGES.lockIn[0], withSpring(1, SPRING.precise)),
+          withTiming(1.04, { duration: handoffDurForScale, easing: EASE.standard }),
+        )
+      : withDelay(STAGES.lockIn[0], withSpring(1, SPRING.precise));
     const hapticTimer = setTimeout(lockIn, STAGES.lockIn[0]);
 
     // Stage 4 — identity.
@@ -225,13 +239,17 @@ export function BrandSplash({
     );
 
     // Stage 5 — handoff: fade out over the already-rendered app beneath.
-    const handoffDur = STAGES.handoff[1] - STAGES.handoff[0];
-    root.value = withDelay(
-      STAGES.handoff[0],
-      withTiming(0, { duration: handoffDur, easing: EASE.exit }, (done) => {
-        if (done) runOnJS(finish)();
-      }),
-    );
+    // With autoHide=false the overlay holds after identity; the `dismiss`
+    // effect below runs the handoff when the caller is ready.
+    if (autoHide) {
+      const handoffDur = STAGES.handoff[1] - STAGES.handoff[0];
+      root.value = withDelay(
+        STAGES.handoff[0],
+        withTiming(0, { duration: handoffDur, easing: EASE.exit }, (done) => {
+          if (done) runOnJS(finish)();
+        }),
+      );
+    }
 
     return () => {
       cancelled = true;
@@ -242,7 +260,22 @@ export function BrandSplash({
       cancelAnimation(nameY);
       cancelAnimation(descOpacity);
     };
-  }, [descriptor, haptics, onDone, reducedMotion, root, markScale, nameOpacity, nameY, descOpacity]);
+  }, [autoHide, descriptor, haptics, onDone, reducedMotion, root, markScale, nameOpacity, nameY, descOpacity]);
+
+  // Caller-driven handoff for autoHide=false boot screens.
+  const dismissed = useSharedValue(false);
+  useEffect(() => {
+    if (autoHide || !dismiss || dismissed.value) return;
+    dismissed.value = true;
+    const finish = () => onDone?.();
+    root.value = withTiming(
+      0,
+      { duration: Math.round(DUR.nav * MOTION.exitRatio), easing: EASE.exit },
+      (done) => {
+        if (done) runOnJS(finish)();
+      },
+    );
+  }, [autoHide, dismiss, dismissed, onDone, root]);
 
   const rootStyle = useAnimatedStyle(() => ({ opacity: root.value }));
   const markWrapStyle = useAnimatedStyle(() => ({ transform: [{ scale: markScale.value }] }));
