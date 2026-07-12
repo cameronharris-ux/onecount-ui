@@ -6,6 +6,7 @@ const root = process.cwd();
 const distDir = path.join(root, "dist");
 const indexJs = path.join(distDir, "index.js");
 const indexDts = path.join(distDir, "index.d.ts");
+const brandSplashDts = path.join(distDir, "BrandSplash.d.ts");
 
 const expectedFiles = [
   "AiBadge",
@@ -77,6 +78,12 @@ const dts = fs.readFileSync(indexDts, "utf8");
 for (const name of expectedExports) {
   assert(dts.includes(name), `dist/index.d.ts does not mention export ${name}`);
 }
+
+const brandSplashTypes = fs.readFileSync(brandSplashDts, "utf8");
+assert(
+  brandSplashTypes.includes("wordmark?: ReactNode"),
+  "BrandSplash must expose the shared canonical wordmark slot",
+);
 
 const require = createRequire(import.meta.url);
 const { CORE, TOKENS_VERSION } = require("@onecount/ui-tokens");

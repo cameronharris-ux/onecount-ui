@@ -8,13 +8,16 @@
  *   4 identity      — product name + descriptor rise in
  *   5 handoff       — overlay fades over the already-rendered app
  *
- * Apps supply only { app, productName, descriptor, motif, onDone }. The
+ * Apps supply only { app, productName, descriptor, motif, onDone }. An app
+ * with a canonical lockup asset may also provide `wordmark`; it replaces the
+ * constructed mark + text while preserving the same motif, identity timing,
+ * lock-in haptic, reduced-motion behavior, and handoff.
  * overlay is pointerEvents="none" and must be mounted only once the app is
  * ready (after SplashScreen.hideAsync) — it never blocks input or readiness.
  * Reduced motion: static mark + name fade-in/hold/fade-out, under 900 ms,
  * haptic preserved.
  */
-import React, { useEffect } from "react";
+import React, { useEffect, type ReactNode } from "react";
 import { StyleSheet, Text, View, type StyleProp, type ViewStyle } from "react-native";
 import Animated, {
   cancelAnimation,
@@ -124,6 +127,8 @@ export interface BrandSplashProps {
   app: AppKey;
   /** Product name shown in stage 4 (e.g. "OneCount", "Shield"). */
   productName: string;
+  /** Canonical product lockup. Replaces the assembled mark + text when supplied. */
+  wordmark?: ReactNode;
   /** Optional short descriptor beneath the name. */
   descriptor?: string;
   /** Motif override; defaults per app (barcode/workflow/boundary/trace). */
@@ -148,6 +153,7 @@ export interface BrandSplashProps {
 export function BrandSplash({
   app,
   productName,
+  wordmark,
   descriptor,
   motif,
   backgroundColor,
@@ -295,28 +301,41 @@ export function BrandSplash({
       {!reducedMotion ? (
         <Motif lineColor={withAlpha(markColor, 0.6)} accent={identity} markHeight={markHeight} />
       ) : null}
-      <Animated.View style={markWrapStyle}>
-        <View style={{ width: BRAND_MARK_UNITS.width * unit, height: markHeight }}>
-          {BRAND_MARK_SEGMENTS.map((segment, index) => (
-            <AssemblingSegment
-              key={segment.key}
-              segment={segment}
-              unit={unit}
-              color={segment.dot ? identity : markColor}
-              index={index}
-              reducedMotion={reducedMotion}
-            />
-          ))}
-        </View>
-      </Animated.View>
-      <Animated.View style={[styles.nameWrap, nameStyle]}>
-        <Text style={[styles.name, { color: markColor }]}>{productName}</Text>
-        {descriptor ? (
-          <Animated.Text style={[styles.descriptor, { color: colors.textMuted ?? withAlpha(markColor, 0.55) }, descStyle]}>
-            {descriptor}
-          </Animated.Text>
-        ) : null}
-      </Animated.View>
+      {wordmark ? (
+        <Animated.View style={[styles.nameWrap, markWrapStyle, nameStyle]}>
+          {wordmark}
+          {descriptor ? (
+            <Animated.Text style={[styles.descriptor, { color: colors.textMuted ?? withAlpha(markColor, 0.55) }, descStyle]}>
+              {descriptor}
+            </Animated.Text>
+          ) : null}
+        </Animated.View>
+      ) : (
+        <>
+          <Animated.View style={markWrapStyle}>
+            <View style={{ width: BRAND_MARK_UNITS.width * unit, height: markHeight }}>
+              {BRAND_MARK_SEGMENTS.map((segment, index) => (
+                <AssemblingSegment
+                  key={segment.key}
+                  segment={segment}
+                  unit={unit}
+                  color={segment.dot ? identity : markColor}
+                  index={index}
+                  reducedMotion={reducedMotion}
+                />
+              ))}
+            </View>
+          </Animated.View>
+          <Animated.View style={[styles.nameWrap, nameStyle]}>
+            <Text style={[styles.name, { color: markColor }]}>{productName}</Text>
+            {descriptor ? (
+              <Animated.Text style={[styles.descriptor, { color: colors.textMuted ?? withAlpha(markColor, 0.55) }, descStyle]}>
+                {descriptor}
+              </Animated.Text>
+            ) : null}
+          </Animated.View>
+        </>
+      )}
     </Animated.View>
   );
 }

@@ -45,7 +45,10 @@ const jsx_runtime_1 = require("react/jsx-runtime");
  *   4 identity      — product name + descriptor rise in
  *   5 handoff       — overlay fades over the already-rendered app
  *
- * Apps supply only { app, productName, descriptor, motif, onDone }. The
+ * Apps supply only { app, productName, descriptor, motif, onDone }. An app
+ * with a canonical lockup asset may also provide `wordmark`; it replaces the
+ * constructed mark + text while preserving the same motif, identity timing,
+ * lock-in haptic, reduced-motion behavior, and handoff.
  * overlay is pointerEvents="none" and must be mounted only once the app is
  * ready (after SplashScreen.hideAsync) — it never blocks input or readiness.
  * Reduced motion: static mark + name fade-in/hold/fade-out, under 900 ms,
@@ -120,8 +123,8 @@ function AssemblingSegment({ segment, unit, color, index, reducedMotion, }) {
             animatedStyle,
         ] }));
 }
-function BrandSplash({ app, productName, descriptor, motif, backgroundColor, accent, haptics = true, autoHide = true, dismiss = false, onDone, style, }) {
-    var _a, _b;
+function BrandSplash({ app, productName, wordmark, descriptor, motif, backgroundColor, accent, haptics = true, autoHide = true, dismiss = false, onDone, style, }) {
+    var _a, _b, _c;
     const reducedMotion = (0, useReducedMotion_1.useReducedMotion)();
     const { theme, themeName } = (0, ui_tokens_1.themeForApp)(app);
     const colors = theme.colors.dark;
@@ -224,7 +227,7 @@ function BrandSplash({ app, productName, descriptor, motif, backgroundColor, acc
         transform: [{ translateY: nameY.value }],
     }));
     const descStyle = (0, react_native_reanimated_1.useAnimatedStyle)(() => ({ opacity: descOpacity.value }));
-    return ((0, jsx_runtime_1.jsxs)(react_native_reanimated_1.default.View, { pointerEvents: "none", accessibilityElementsHidden: true, importantForAccessibility: "no-hide-descendants", style: [react_native_1.StyleSheet.absoluteFill, styles.root, { backgroundColor: bg }, rootStyle, style], children: [!reducedMotion ? ((0, jsx_runtime_1.jsx)(Motif, { lineColor: withAlpha(markColor, 0.6), accent: identity, markHeight: markHeight })) : null, (0, jsx_runtime_1.jsx)(react_native_reanimated_1.default.View, { style: markWrapStyle, children: (0, jsx_runtime_1.jsx)(react_native_1.View, { style: { width: BrandMark_1.BRAND_MARK_UNITS.width * unit, height: markHeight }, children: BrandMark_1.BRAND_MARK_SEGMENTS.map((segment, index) => ((0, jsx_runtime_1.jsx)(AssemblingSegment, { segment: segment, unit: unit, color: segment.dot ? identity : markColor, index: index, reducedMotion: reducedMotion }, segment.key))) }) }), (0, jsx_runtime_1.jsxs)(react_native_reanimated_1.default.View, { style: [styles.nameWrap, nameStyle], children: [(0, jsx_runtime_1.jsx)(react_native_1.Text, { style: [styles.name, { color: markColor }], children: productName }), descriptor ? ((0, jsx_runtime_1.jsx)(react_native_reanimated_1.default.Text, { style: [styles.descriptor, { color: (_b = colors.textMuted) !== null && _b !== void 0 ? _b : withAlpha(markColor, 0.55) }, descStyle], children: descriptor })) : null] })] }));
+    return ((0, jsx_runtime_1.jsxs)(react_native_reanimated_1.default.View, { pointerEvents: "none", accessibilityElementsHidden: true, importantForAccessibility: "no-hide-descendants", style: [react_native_1.StyleSheet.absoluteFill, styles.root, { backgroundColor: bg }, rootStyle, style], children: [!reducedMotion ? ((0, jsx_runtime_1.jsx)(Motif, { lineColor: withAlpha(markColor, 0.6), accent: identity, markHeight: markHeight })) : null, wordmark ? ((0, jsx_runtime_1.jsxs)(react_native_reanimated_1.default.View, { style: [styles.nameWrap, markWrapStyle, nameStyle], children: [wordmark, descriptor ? ((0, jsx_runtime_1.jsx)(react_native_reanimated_1.default.Text, { style: [styles.descriptor, { color: (_b = colors.textMuted) !== null && _b !== void 0 ? _b : withAlpha(markColor, 0.55) }, descStyle], children: descriptor })) : null] })) : ((0, jsx_runtime_1.jsxs)(jsx_runtime_1.Fragment, { children: [(0, jsx_runtime_1.jsx)(react_native_reanimated_1.default.View, { style: markWrapStyle, children: (0, jsx_runtime_1.jsx)(react_native_1.View, { style: { width: BrandMark_1.BRAND_MARK_UNITS.width * unit, height: markHeight }, children: BrandMark_1.BRAND_MARK_SEGMENTS.map((segment, index) => ((0, jsx_runtime_1.jsx)(AssemblingSegment, { segment: segment, unit: unit, color: segment.dot ? identity : markColor, index: index, reducedMotion: reducedMotion }, segment.key))) }) }), (0, jsx_runtime_1.jsxs)(react_native_reanimated_1.default.View, { style: [styles.nameWrap, nameStyle], children: [(0, jsx_runtime_1.jsx)(react_native_1.Text, { style: [styles.name, { color: markColor }], children: productName }), descriptor ? ((0, jsx_runtime_1.jsx)(react_native_reanimated_1.default.Text, { style: [styles.descriptor, { color: (_c = colors.textMuted) !== null && _c !== void 0 ? _c : withAlpha(markColor, 0.55) }, descStyle], children: descriptor })) : null] })] }))] }));
 }
 /** #RRGGBB → rgba(...) — local, avoids a color dependency. */
 function withAlpha(hex, alpha) {
