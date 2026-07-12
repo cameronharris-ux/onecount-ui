@@ -11,7 +11,11 @@ import Animated, {
 } from "react-native-reanimated";
 import { CORE } from "@onecount/ui-tokens";
 
-import { appHue, type OneCountApp } from "./internal";
+import {
+  resolveAuroraSecondaryHue,
+  type AuroraPalette,
+} from "./auroraPalette";
+import type { OneCountApp } from "./internal";
 import { useReducedMotion } from "./useReducedMotion";
 
 const W = 390;
@@ -20,6 +24,7 @@ const H = 800;
 export interface AuroraProps {
   app?: OneCountApp;
   hue?: string;
+  palette?: AuroraPalette;
   variant?: "static" | "ambient";
   full?: boolean;
   height?: number;
@@ -94,7 +99,7 @@ function useLayerDrift(enabled: boolean, offset: number, x: number, y: number, s
   });
 }
 
-function StaticSvg({ mint, identity, teal }: { mint: string; identity: string; teal: string }) {
+function StaticSvg({ mint, secondary, teal }: { mint: string; secondary: string; teal: string }) {
   return (
     <Svg width="100%" height="100%" viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="none">
       <Defs>
@@ -102,9 +107,9 @@ function StaticSvg({ mint, identity, teal }: { mint: string; identity: string; t
           <Stop offset="0" stopColor={mint} stopOpacity={0.32} />
           <Stop offset="0.65" stopColor={mint} stopOpacity={0} />
         </RadialGradient>
-        <RadialGradient id="ocIdentity" cx="50%" cy="50%" rx="50%" ry="50%">
-          <Stop offset="0" stopColor={identity} stopOpacity={0.22} />
-          <Stop offset="0.65" stopColor={identity} stopOpacity={0} />
+        <RadialGradient id="ocSecondary" cx="50%" cy="50%" rx="50%" ry="50%">
+          <Stop offset="0" stopColor={secondary} stopOpacity={0.22} />
+          <Stop offset="0.65" stopColor={secondary} stopOpacity={0} />
         </RadialGradient>
         <RadialGradient id="ocTeal" cx="50%" cy="50%" rx="50%" ry="50%">
           <Stop offset="0" stopColor={teal} stopOpacity={0.16} />
@@ -112,7 +117,7 @@ function StaticSvg({ mint, identity, teal }: { mint: string; identity: string; t
         </RadialGradient>
       </Defs>
       <Ellipse cx={W * 0.2} cy={H * 0.06} rx={W * 0.7} ry={H * 0.22} fill="url(#ocMint)" />
-      <Ellipse cx={W * 0.95} cy={H * 0.1} rx={W * 0.6} ry={H * 0.2} fill="url(#ocIdentity)" />
+      <Ellipse cx={W * 0.95} cy={H * 0.1} rx={W * 0.6} ry={H * 0.2} fill="url(#ocSecondary)" />
       <Ellipse cx={W * 0.3} cy={H * 0.92} rx={W * 0.75} ry={H * 0.24} fill="url(#ocTeal)" />
     </Svg>
   );
@@ -137,6 +142,7 @@ function AnimatedLayer({ layer, style }: { layer: LayerProps; style: ReturnType<
 export function Aurora({
   app = "onecount",
   hue,
+  palette = "brand",
   variant = "static",
   full = true,
   height,
@@ -145,11 +151,11 @@ export function Aurora({
   const reducedMotion = useReducedMotion();
   const animate = variant === "ambient" && !reducedMotion;
   const mint = CORE.brand.accent;
-  const identity = hue ?? appHue(app);
+  const secondary = resolveAuroraSecondaryHue(app, palette, hue);
   const teal = CORE.brand.tealBridge;
 
   const mintDrift = useLayerDrift(animate, 0, 10, 6, 0.018);
-  const identityDrift = useLayerDrift(animate, 0.33, 12, 8, 0.022);
+  const secondaryDrift = useLayerDrift(animate, 0.33, 12, 8, 0.022);
   const tealDrift = useLayerDrift(animate, 0.67, 8, 5, 0.014);
 
   const layers: LayerProps[] = [
@@ -164,8 +170,8 @@ export function Aurora({
       ry: H * 0.22,
     },
     {
-      id: "ocIdentityAmbient",
-      color: identity,
+      id: "ocSecondaryAmbient",
+      color: secondary,
       firstStopOpacity: 0.22,
       secondStopOffset: "0.65",
       cx: W * 0.95,
@@ -186,17 +192,22 @@ export function Aurora({
   ];
 
   return (
-    <View pointerEvents="none" style={containerStyle(full, height, intensity)}>
+    <View
+      pointerEvents="none"
+      accessible={false}
+      accessibilityElementsHidden
+      importantForAccessibility="no-hide-descendants"
+      style={containerStyle(full, height, intensity)}
+    >
       {animate ? (
         <>
           <AnimatedLayer layer={layers[0]} style={mintDrift} />
-          <AnimatedLayer layer={layers[1]} style={identityDrift} />
+          <AnimatedLayer layer={layers[1]} style={secondaryDrift} />
           <AnimatedLayer layer={layers[2]} style={tealDrift} />
         </>
       ) : (
-        <StaticSvg mint={mint} identity={identity} teal={teal} />
+        <StaticSvg mint={mint} secondary={secondary} teal={teal} />
       )}
     </View>
   );
 }
-

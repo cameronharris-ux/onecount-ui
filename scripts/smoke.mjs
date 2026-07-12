@@ -16,6 +16,7 @@ const expectedFiles = [
   "AnimatedRing",
   "AnimatedSplash",
   "Aurora",
+  "auroraPalette",
   "BrandMark",
   "BrandSplash",
   "MotionSheet",
@@ -79,11 +80,23 @@ for (const name of expectedExports) {
 
 const require = createRequire(import.meta.url);
 const { CORE, TOKENS_VERSION } = require("@onecount/ui-tokens");
+const { resolveAuroraSecondaryHue } = require(path.join(distDir, "auroraPalette.js"));
 assert(TOKENS_VERSION === "0.5.0", "ui-tokens version did not resolve to 0.5.0");
 assert(CORE.brand.accent === CORE.identityHues.onecount, "brand accent and OneCount identity hue drifted");
 assert(CORE.brand.ai === CORE.ai, "AI core token drifted");
 assert(CORE.componentState.pressScale === CORE.motion.micro.pressScaleButton, "press scale token drifted");
 assert(CORE.haptics["destructive-confirmed"] === "strong", "haptic vocabulary did not resolve");
+assert(
+  resolveAuroraSecondaryHue("shield", "brand") === CORE.brand.ai,
+  "Aurora brand palette did not preserve the original magenta layer",
+);
+assert(
+  resolveAuroraSecondaryHue("shield", "product") === CORE.identityHues.shield,
+  "Aurora product palette did not resolve the app identity hue",
+);
+assert(
+  resolveAuroraSecondaryHue("trace", "brand", "#123456") === "#123456",
+  "Aurora explicit hue did not override the selected palette",
+);
 
 console.log("smoke ok");
-

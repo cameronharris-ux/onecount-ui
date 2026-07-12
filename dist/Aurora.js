@@ -40,7 +40,7 @@ const react_native_1 = require("react-native");
 const react_native_svg_1 = __importStar(require("react-native-svg"));
 const react_native_reanimated_1 = __importStar(require("react-native-reanimated"));
 const ui_tokens_1 = require("@onecount/ui-tokens");
-const internal_1 = require("./internal");
+const auroraPalette_1 = require("./auroraPalette");
 const useReducedMotion_1 = require("./useReducedMotion");
 const W = 390;
 const H = 800;
@@ -91,20 +91,20 @@ function useLayerDrift(enabled, offset, x, y, scaleBy) {
         };
     });
 }
-function StaticSvg({ mint, identity, teal }) {
-    return ((0, jsx_runtime_1.jsxs)(react_native_svg_1.default, { width: "100%", height: "100%", viewBox: `0 0 ${W} ${H}`, preserveAspectRatio: "none", children: [(0, jsx_runtime_1.jsxs)(react_native_svg_1.Defs, { children: [(0, jsx_runtime_1.jsxs)(react_native_svg_1.RadialGradient, { id: "ocMint", cx: "50%", cy: "50%", rx: "50%", ry: "50%", children: [(0, jsx_runtime_1.jsx)(react_native_svg_1.Stop, { offset: "0", stopColor: mint, stopOpacity: 0.32 }), (0, jsx_runtime_1.jsx)(react_native_svg_1.Stop, { offset: "0.65", stopColor: mint, stopOpacity: 0 })] }), (0, jsx_runtime_1.jsxs)(react_native_svg_1.RadialGradient, { id: "ocIdentity", cx: "50%", cy: "50%", rx: "50%", ry: "50%", children: [(0, jsx_runtime_1.jsx)(react_native_svg_1.Stop, { offset: "0", stopColor: identity, stopOpacity: 0.22 }), (0, jsx_runtime_1.jsx)(react_native_svg_1.Stop, { offset: "0.65", stopColor: identity, stopOpacity: 0 })] }), (0, jsx_runtime_1.jsxs)(react_native_svg_1.RadialGradient, { id: "ocTeal", cx: "50%", cy: "50%", rx: "50%", ry: "50%", children: [(0, jsx_runtime_1.jsx)(react_native_svg_1.Stop, { offset: "0", stopColor: teal, stopOpacity: 0.16 }), (0, jsx_runtime_1.jsx)(react_native_svg_1.Stop, { offset: "0.7", stopColor: teal, stopOpacity: 0 })] })] }), (0, jsx_runtime_1.jsx)(react_native_svg_1.Ellipse, { cx: W * 0.2, cy: H * 0.06, rx: W * 0.7, ry: H * 0.22, fill: "url(#ocMint)" }), (0, jsx_runtime_1.jsx)(react_native_svg_1.Ellipse, { cx: W * 0.95, cy: H * 0.1, rx: W * 0.6, ry: H * 0.2, fill: "url(#ocIdentity)" }), (0, jsx_runtime_1.jsx)(react_native_svg_1.Ellipse, { cx: W * 0.3, cy: H * 0.92, rx: W * 0.75, ry: H * 0.24, fill: "url(#ocTeal)" })] }));
+function StaticSvg({ mint, secondary, teal }) {
+    return ((0, jsx_runtime_1.jsxs)(react_native_svg_1.default, { width: "100%", height: "100%", viewBox: `0 0 ${W} ${H}`, preserveAspectRatio: "none", children: [(0, jsx_runtime_1.jsxs)(react_native_svg_1.Defs, { children: [(0, jsx_runtime_1.jsxs)(react_native_svg_1.RadialGradient, { id: "ocMint", cx: "50%", cy: "50%", rx: "50%", ry: "50%", children: [(0, jsx_runtime_1.jsx)(react_native_svg_1.Stop, { offset: "0", stopColor: mint, stopOpacity: 0.32 }), (0, jsx_runtime_1.jsx)(react_native_svg_1.Stop, { offset: "0.65", stopColor: mint, stopOpacity: 0 })] }), (0, jsx_runtime_1.jsxs)(react_native_svg_1.RadialGradient, { id: "ocSecondary", cx: "50%", cy: "50%", rx: "50%", ry: "50%", children: [(0, jsx_runtime_1.jsx)(react_native_svg_1.Stop, { offset: "0", stopColor: secondary, stopOpacity: 0.22 }), (0, jsx_runtime_1.jsx)(react_native_svg_1.Stop, { offset: "0.65", stopColor: secondary, stopOpacity: 0 })] }), (0, jsx_runtime_1.jsxs)(react_native_svg_1.RadialGradient, { id: "ocTeal", cx: "50%", cy: "50%", rx: "50%", ry: "50%", children: [(0, jsx_runtime_1.jsx)(react_native_svg_1.Stop, { offset: "0", stopColor: teal, stopOpacity: 0.16 }), (0, jsx_runtime_1.jsx)(react_native_svg_1.Stop, { offset: "0.7", stopColor: teal, stopOpacity: 0 })] })] }), (0, jsx_runtime_1.jsx)(react_native_svg_1.Ellipse, { cx: W * 0.2, cy: H * 0.06, rx: W * 0.7, ry: H * 0.22, fill: "url(#ocMint)" }), (0, jsx_runtime_1.jsx)(react_native_svg_1.Ellipse, { cx: W * 0.95, cy: H * 0.1, rx: W * 0.6, ry: H * 0.2, fill: "url(#ocSecondary)" }), (0, jsx_runtime_1.jsx)(react_native_svg_1.Ellipse, { cx: W * 0.3, cy: H * 0.92, rx: W * 0.75, ry: H * 0.24, fill: "url(#ocTeal)" })] }));
 }
 function AnimatedLayer({ layer, style }) {
     return ((0, jsx_runtime_1.jsx)(react_native_reanimated_1.default.View, { pointerEvents: "none", style: [react_native_1.StyleSheet.absoluteFillObject, style], children: (0, jsx_runtime_1.jsxs)(react_native_svg_1.default, { width: "100%", height: "100%", viewBox: `0 0 ${W} ${H}`, preserveAspectRatio: "none", children: [(0, jsx_runtime_1.jsx)(react_native_svg_1.Defs, { children: (0, jsx_runtime_1.jsxs)(react_native_svg_1.RadialGradient, { id: layer.id, cx: "50%", cy: "50%", rx: "50%", ry: "50%", children: [(0, jsx_runtime_1.jsx)(react_native_svg_1.Stop, { offset: "0", stopColor: layer.color, stopOpacity: layer.firstStopOpacity }), (0, jsx_runtime_1.jsx)(react_native_svg_1.Stop, { offset: layer.secondStopOffset, stopColor: layer.color, stopOpacity: 0 })] }) }), (0, jsx_runtime_1.jsx)(react_native_svg_1.Ellipse, { cx: layer.cx, cy: layer.cy, rx: layer.rx, ry: layer.ry, fill: `url(#${layer.id})` })] }) }));
 }
-function Aurora({ app = "onecount", hue, variant = "static", full = true, height, intensity = 0.6, }) {
+function Aurora({ app = "onecount", hue, palette = "brand", variant = "static", full = true, height, intensity = 0.6, }) {
     const reducedMotion = (0, useReducedMotion_1.useReducedMotion)();
     const animate = variant === "ambient" && !reducedMotion;
     const mint = ui_tokens_1.CORE.brand.accent;
-    const identity = hue !== null && hue !== void 0 ? hue : (0, internal_1.appHue)(app);
+    const secondary = (0, auroraPalette_1.resolveAuroraSecondaryHue)(app, palette, hue);
     const teal = ui_tokens_1.CORE.brand.tealBridge;
     const mintDrift = useLayerDrift(animate, 0, 10, 6, 0.018);
-    const identityDrift = useLayerDrift(animate, 0.33, 12, 8, 0.022);
+    const secondaryDrift = useLayerDrift(animate, 0.33, 12, 8, 0.022);
     const tealDrift = useLayerDrift(animate, 0.67, 8, 5, 0.014);
     const layers = [
         {
@@ -118,8 +118,8 @@ function Aurora({ app = "onecount", hue, variant = "static", full = true, height
             ry: H * 0.22,
         },
         {
-            id: "ocIdentityAmbient",
-            color: identity,
+            id: "ocSecondaryAmbient",
+            color: secondary,
             firstStopOpacity: 0.22,
             secondStopOffset: "0.65",
             cx: W * 0.95,
@@ -138,5 +138,5 @@ function Aurora({ app = "onecount", hue, variant = "static", full = true, height
             ry: H * 0.24,
         },
     ];
-    return ((0, jsx_runtime_1.jsx)(react_native_1.View, { pointerEvents: "none", style: containerStyle(full, height, intensity), children: animate ? ((0, jsx_runtime_1.jsxs)(jsx_runtime_1.Fragment, { children: [(0, jsx_runtime_1.jsx)(AnimatedLayer, { layer: layers[0], style: mintDrift }), (0, jsx_runtime_1.jsx)(AnimatedLayer, { layer: layers[1], style: identityDrift }), (0, jsx_runtime_1.jsx)(AnimatedLayer, { layer: layers[2], style: tealDrift })] })) : ((0, jsx_runtime_1.jsx)(StaticSvg, { mint: mint, identity: identity, teal: teal })) }));
+    return ((0, jsx_runtime_1.jsx)(react_native_1.View, { pointerEvents: "none", accessible: false, accessibilityElementsHidden: true, importantForAccessibility: "no-hide-descendants", style: containerStyle(full, height, intensity), children: animate ? ((0, jsx_runtime_1.jsxs)(jsx_runtime_1.Fragment, { children: [(0, jsx_runtime_1.jsx)(AnimatedLayer, { layer: layers[0], style: mintDrift }), (0, jsx_runtime_1.jsx)(AnimatedLayer, { layer: layers[1], style: secondaryDrift }), (0, jsx_runtime_1.jsx)(AnimatedLayer, { layer: layers[2], style: tealDrift })] })) : ((0, jsx_runtime_1.jsx)(StaticSvg, { mint: mint, secondary: secondary, teal: teal })) }));
 }

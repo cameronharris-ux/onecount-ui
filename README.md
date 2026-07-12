@@ -9,7 +9,7 @@ Cameron's 2026-07-09 override of doc 10 section 7 is explicit here: this package
 ```json
 {
   "dependencies": {
-    "@onecount/ui": "github:cameronharris-ux/onecount-ui#v0.1.0"
+    "@onecount/ui": "github:cameronharris-ux/onecount-ui#v0.3.2"
   }
 }
 ```
@@ -32,7 +32,7 @@ import { Aurora, ProductDot, PressableScale } from "@onecount/ui";
 export function Header() {
   return (
     <>
-      <Aurora app="ops" variant="ambient" />
+      <Aurora app="ops" variant="static" />
       <PressableScale onPress={() => {}}>
         <ProductDot app="shield" />
       </PressableScale>
@@ -93,7 +93,7 @@ console.log(tokens.CORE.identityHues.trace);
 
 Reduced motion is live-updating through `AccessibilityInfo.reduceMotionChanged`. Aurora becomes static and AnimatedSplash snaps to its final frame before a quick fade.
 
-AI magenta is AI-only. Components import `tokens.CORE.brand.ai`; do not hand-copy the hex. Product identity hues are dots, icon accents, or subtle washes only.
+The canonical full-screen Aurora preserves the original OneCount donor: low-opacity mint, magenta, and teal. Saturated magenta controls, halos, badges, and framing remain AI-only. Components import `tokens.CORE.brand.ai`; do not hand-copy the hex. Product identity hues stay on dots and icon accents unless a caller explicitly requests `palette="product"` for a low-opacity attribution wash.
 
 Build and smoke-test:
 
@@ -101,4 +101,3 @@ Build and smoke-test:
 npm run build
 npm test
 ```
-
