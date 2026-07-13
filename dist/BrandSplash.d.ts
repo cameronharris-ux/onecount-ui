@@ -20,7 +20,7 @@
 import React, { type ReactNode } from "react";
 import { type StyleProp, type ViewStyle } from "react-native";
 import { type AppKey } from "@onecount/ui-tokens";
-import { type SplashMotifName } from "./motifs";
+import { type SplashMotifName } from "./splashContract";
 export interface BrandSplashProps {
     /** App key from @onecount/ui-tokens — drives theme, identity hue, motif. */
     app: AppKey;
@@ -30,7 +30,7 @@ export interface BrandSplashProps {
     wordmark?: ReactNode;
     /** Optional short descriptor beneath the name. */
     descriptor?: string;
-    /** Motif override; defaults per app (barcode/workflow/boundary/trace). */
+    /** Motif override; defaults per app (barcode/workflow/boundary/trace/pulse). */
     motif?: SplashMotifName;
     backgroundColor?: string;
     /** Identity hue override for the mark dot + motif accents. */

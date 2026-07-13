@@ -44,6 +44,7 @@ const jsx_runtime_1 = require("react/jsx-runtime");
  *   boundary (Shield)   — corner brackets + one lock-in ring pulse
  *   trace    (Trace)    — nodes connected by a line completing at lock-in
  *   workflow (Ops)      — four nodes closing into a loop at lock-in
+ *   pulse    (Pulse)    — eight signal segments drawing in path order
  *
  * Plain Views + transform/opacity only; motifs render nothing under reduced
  * motion (the splash falls back to mark + name fades).
@@ -53,6 +54,7 @@ const react_native_1 = require("react-native");
 const react_native_reanimated_1 = __importStar(require("react-native-reanimated"));
 const ui_tokens_1 = require("@onecount/ui-tokens");
 const motion_1 = require("./motion");
+const splashContract_1 = require("./splashContract");
 const STAGES = ui_tokens_1.MOTION.splashStages;
 /** Drives 0→1 across the construction window, then a single lock-in pulse 1→2→1. */
 function useMotifClock() {
@@ -212,11 +214,35 @@ function WorkflowMotif({ lineColor, accent, markHeight }) {
                         { left: pos.x - 4, top: pos.y - 4, backgroundColor: i === 0 ? accent : lineColor },
                     ] }, `node-${i}`)))] }) }));
 }
+// ---------------------------------------------------------------------------
+// Pulse — workforce signal waveform
+// ---------------------------------------------------------------------------
+function PulseMotif({ lineColor, accent, markHeight }) {
+    const { build, pulse } = useMotifClock();
+    const scale = markHeight / 240;
+    const accentStyle = (0, react_native_reanimated_1.useAnimatedStyle)(() => ({ opacity: pulse.value * 0.24 }));
+    return ((0, jsx_runtime_1.jsx)(react_native_1.View, { pointerEvents: "none", style: [styles.fill, styles.center], children: (0, jsx_runtime_1.jsx)(react_native_1.View, { style: { width: 0, height: 0 }, children: splashContract_1.PULSE_SIGNAL_SEGMENTS.map((segment, index) => ((0, jsx_runtime_1.jsxs)(react_native_1.View, { style: {
+                    position: "absolute",
+                    left: (segment.x - 120) * scale,
+                    top: (segment.y - 120) * scale - 1,
+                    width: segment.length * scale,
+                    height: 2,
+                    transformOrigin: "left",
+                    transform: [{ rotate: `${segment.angleDeg}deg` }],
+                }, children: [(0, jsx_runtime_1.jsx)(DrawLine, { build: build, index: index, count: splashContract_1.PULSE_SIGNAL_SEGMENTS.length, baseOpacity: 0.42, style: {
+                            width: "100%",
+                            height: 2,
+                            borderRadius: 1,
+                            backgroundColor: lineColor,
+                            transformOrigin: "left",
+                        } }), (0, jsx_runtime_1.jsx)(react_native_reanimated_1.default.View, { style: [styles.pulseAccent, { backgroundColor: accent }, accentStyle] })] }, `signal-${index}`))) }) }));
+}
 exports.SPLASH_MOTIFS = {
     barcode: BarcodeMotif,
     boundary: BoundaryMotif,
     trace: TraceMotif,
     workflow: WorkflowMotif,
+    pulse: PulseMotif,
 };
 const styles = react_native_1.StyleSheet.create({
     fill: react_native_1.StyleSheet.absoluteFillObject,
@@ -225,4 +251,5 @@ const styles = react_native_1.StyleSheet.create({
     absCenter: { position: "absolute" },
     dot: { position: "absolute", width: 8, height: 8, borderRadius: 4 },
     dotStatic: { width: 8, height: 8, borderRadius: 4 },
+    pulseAccent: { ...react_native_1.StyleSheet.absoluteFillObject, borderRadius: 1 },
 });

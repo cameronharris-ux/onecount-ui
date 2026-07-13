@@ -9,7 +9,7 @@ Cameron's 2026-07-09 override of doc 10 section 7 is explicit here: this package
 ```json
 {
   "dependencies": {
-    "@onecount/ui": "github:cameronharris-ux/onecount-ui#v0.3.2"
+    "@onecount/ui": "github:cameronharris-ux/onecount-ui#v0.4.0"
   }
 }
 ```
@@ -49,6 +49,12 @@ import { AnimatedSplash } from "@onecount/ui";
   wordmarkSource={require("./assets/wordmark.png")}
   onDone={() => setSplashDone(true)}
 />;
+```
+
+```tsx
+import { BrandSplash } from "@onecount/ui";
+
+<BrandSplash app="pulse" productName="Pulse" />;
 ```
 
 ```tsx
@@ -94,6 +100,8 @@ console.log(tokens.CORE.identityHues.trace);
 Reduced motion is live-updating through `AccessibilityInfo.reduceMotionChanged`. Aurora becomes static and AnimatedSplash snaps to its final frame before a quick fade.
 
 The canonical full-screen Aurora preserves the original OneCount donor: low-opacity mint, magenta, and teal. Saturated magenta controls, halos, badges, and framing remain AI-only. Components import `tokens.CORE.brand.ai`; do not hand-copy the hex. Product identity hues stay on dots and icon accents unless a caller explicitly requests `palette="product"` for a low-opacity attribution wash.
+
+`BrandSplash` shares one choreography across five motifs: OneCount `barcode`, Ops `workflow`, Shield `boundary`, Trace `trace`, and Pulse `pulse`. Pulse uses the token-owned violet identity hue and does not need an accent override.
 
 Build and smoke-test:
 

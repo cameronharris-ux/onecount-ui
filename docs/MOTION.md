@@ -2,7 +2,8 @@
 
 Version 1.0 — July 2026. Canonical spec for motion across the OneCount family:
 OneCount (inventory), Ops (kitchen operations), Shield (food safety), Trace
-(labelling/traceability), the marketing site, and the web dashboard.
+(labelling/traceability), Pulse (workforce identity/presence), the marketing
+site, and the web dashboard.
 
 Source of truth for values: `@onecount/ui-tokens` → `CORE.motionSpec` (runtime
 scale) and `CORE.motion` (audit envelope). Source of truth for behaviour:
@@ -158,7 +159,7 @@ same hierarchy, not a degraded mode.
 
 ## 5. Splash system (`BrandSplash`)
 
-One choreography, shared by all four apps; only the motif and identity line
+One choreography, shared by all five apps; only the motif and identity line
 change. Total 1450 ms nominal; never exceeds 1800 ms; never blocks input
 (overlay is `pointerEvents="none"` above the already-rendered app); never
 delays readiness — the JS overlay mounts only after the app is ready and the
@@ -188,6 +189,9 @@ fade. No blank frames, no cuts.
   that completes at lock-in — a journey resolving into identity.
 - **Ops — `workflow`**: four nodes connect into a closed loop that locks with
   the mark — coordination clicking into place.
+- **Pulse — `pulse`**: an eight-segment workforce signal draws in path order;
+  at lock-in the same geometry receives one violet opacity pulse — identity
+  resolving without a dot, bloom, or spectrum wash.
 
 Motifs are monochrome surface tones plus at most a 12 % wash of the product's
 `identityHue` (per the identity-hue rule in tokens). Implemented as plain

@@ -10,6 +10,7 @@ exports.APP_LABELS = {
     ops: "Ops",
     shield: "Shield",
     trace: "Trace",
+    pulse: "Pulse",
 };
 function appHue(app) {
     return ui_tokens_1.CORE.identityHues[app];

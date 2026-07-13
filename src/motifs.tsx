@@ -7,6 +7,7 @@
  *   boundary (Shield)   — corner brackets + one lock-in ring pulse
  *   trace    (Trace)    — nodes connected by a line completing at lock-in
  *   workflow (Ops)      — four nodes closing into a loop at lock-in
+ *   pulse    (Pulse)    — eight signal segments drawing in path order
  *
  * Plain Views + transform/opacity only; motifs render nothing under reduced
  * motion (the splash falls back to mark + name fades).
@@ -26,13 +27,12 @@ import Animated, {
 import { MOTION } from "@onecount/ui-tokens";
 
 import { EASE } from "./motion";
-
-export type SplashMotifName = "barcode" | "boundary" | "trace" | "workflow";
+import { PULSE_SIGNAL_SEGMENTS, type SplashMotifName } from "./splashContract";
 
 export interface MotifProps {
   /** Line/texture colour (already alpha'd by the caller). */
   lineColor: string;
-  /** Product identity hue — dots and nodes only. */
+  /** Product identity hue for motif accents, including dots, nodes, and co-located overlays. */
   accent: string;
   /** Rendered mark height, used to size the motif field. */
   markHeight: number;
@@ -361,11 +361,60 @@ function WorkflowMotif({ lineColor, accent, markHeight }: MotifProps) {
   );
 }
 
+// ---------------------------------------------------------------------------
+// Pulse — workforce signal waveform
+// ---------------------------------------------------------------------------
+
+function PulseMotif({ lineColor, accent, markHeight }: MotifProps) {
+  const { build, pulse } = useMotifClock();
+  const scale = markHeight / 240;
+  const accentStyle = useAnimatedStyle(() => ({ opacity: pulse.value * 0.24 }));
+
+  return (
+    <View pointerEvents="none" style={[styles.fill, styles.center]}>
+      <View style={{ width: 0, height: 0 }}>
+        {PULSE_SIGNAL_SEGMENTS.map((segment, index) => (
+          <View
+            key={`signal-${index}`}
+            style={{
+              position: "absolute",
+              left: (segment.x - 120) * scale,
+              top: (segment.y - 120) * scale - 1,
+              width: segment.length * scale,
+              height: 2,
+              transformOrigin: "left",
+              transform: [{ rotate: `${segment.angleDeg}deg` }],
+            }}
+          >
+            <DrawLine
+              build={build}
+              index={index}
+              count={PULSE_SIGNAL_SEGMENTS.length}
+              baseOpacity={0.42}
+              style={{
+                width: "100%",
+                height: 2,
+                borderRadius: 1,
+                backgroundColor: lineColor,
+                transformOrigin: "left",
+              }}
+            />
+            <Animated.View
+              style={[styles.pulseAccent, { backgroundColor: accent }, accentStyle]}
+            />
+          </View>
+        ))}
+      </View>
+    </View>
+  );
+}
+
 export const SPLASH_MOTIFS: Record<SplashMotifName, React.ComponentType<MotifProps>> = {
   barcode: BarcodeMotif,
   boundary: BoundaryMotif,
   trace: TraceMotif,
   workflow: WorkflowMotif,
+  pulse: PulseMotif,
 };
 
 const styles = StyleSheet.create({
@@ -375,4 +424,5 @@ const styles = StyleSheet.create({
   absCenter: { position: "absolute" },
   dot: { position: "absolute", width: 8, height: 8, borderRadius: 4 },
   dotStatic: { width: 8, height: 8, borderRadius: 4 },
+  pulseAccent: { ...StyleSheet.absoluteFillObject, borderRadius: 1 },
 });

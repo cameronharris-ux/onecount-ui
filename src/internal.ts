@@ -1,12 +1,13 @@
 import { CORE, themeForApp } from "@onecount/ui-tokens";
 
-export type OneCountApp = "onecount" | "ops" | "shield" | "trace";
+export type OneCountApp = "onecount" | "ops" | "shield" | "trace" | "pulse";
 
 export const APP_LABELS: Record<OneCountApp, string> = {
   onecount: "OneCount",
   ops: "Ops",
   shield: "Shield",
   trace: "Trace",
+  pulse: "Pulse",
 };
 
 export function appHue(app: OneCountApp): string {
@@ -31,4 +32,3 @@ export function withAlpha(color: string, alpha: number): string {
 
   return `rgba(${r}, ${g}, ${b}, ${safeAlpha})`;
 }
-

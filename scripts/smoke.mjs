@@ -7,6 +7,7 @@ const distDir = path.join(root, "dist");
 const indexJs = path.join(distDir, "index.js");
 const indexDts = path.join(distDir, "index.d.ts");
 const brandSplashDts = path.join(distDir, "BrandSplash.d.ts");
+const internalDts = path.join(distDir, "internal.d.ts");
 
 const expectedFiles = [
   "AiBadge",
@@ -22,6 +23,7 @@ const expectedFiles = [
   "BrandSplash",
   "MotionSheet",
   "StaggerIn",
+  "splashContract",
   "motion",
   "motifs",
   "PressableScale",
@@ -53,6 +55,12 @@ const expectedExports = [
   "BrandMark",
   "BrandSplash",
   "SPLASH_MOTIFS",
+  "DEFAULT_SPLASH_MOTIF",
+  "PULSE_SIGNAL_HIGHLIGHT_PATH",
+  "PULSE_SIGNAL_PATH",
+  "PULSE_SIGNAL_POINTS",
+  "PULSE_SIGNAL_SEGMENTS",
+  "SplashMotifName",
   "StaggerIn",
   "HAPTIC_MOMENTS",
   "hapticMoment",
@@ -85,10 +93,22 @@ assert(
   "BrandSplash must expose the shared canonical wordmark slot",
 );
 
+const internalTypes = fs.readFileSync(internalDts, "utf8");
+assert(internalTypes.includes('"pulse"'), "OneCountApp must include pulse");
+
 const require = createRequire(import.meta.url);
 const { CORE, TOKENS_VERSION } = require("@onecount/ui-tokens");
 const { resolveAuroraSecondaryHue } = require(path.join(distDir, "auroraPalette.js"));
-assert(TOKENS_VERSION === "0.5.0", "ui-tokens version did not resolve to 0.5.0");
+const { APP_LABELS } = require(path.join(distDir, "internal.js"));
+const {
+  DEFAULT_SPLASH_MOTIF,
+  PULSE_SIGNAL_HIGHLIGHT_PATH,
+  PULSE_SIGNAL_PATH,
+  PULSE_SIGNAL_POINTS,
+  PULSE_SIGNAL_SEGMENTS,
+} = require(path.join(distDir, "splashContract.js"));
+assert(TOKENS_VERSION === "0.6.0", "ui-tokens version did not resolve to 0.6.0");
+assert(APP_LABELS.pulse === "Pulse", "Pulse app label did not resolve");
 assert(CORE.brand.accent === CORE.identityHues.onecount, "brand accent and OneCount identity hue drifted");
 assert(CORE.brand.ai === CORE.ai, "AI core token drifted");
 assert(CORE.componentState.pressScale === CORE.motion.micro.pressScaleButton, "press scale token drifted");
@@ -104,6 +124,46 @@ assert(
 assert(
   resolveAuroraSecondaryHue("trace", "brand", "#123456") === "#123456",
   "Aurora explicit hue did not override the selected palette",
+);
+assert(
+  resolveAuroraSecondaryHue("pulse", "brand") === CORE.brand.ai,
+  "Pulse Aurora brand palette did not preserve the original magenta layer",
+);
+assert(
+  resolveAuroraSecondaryHue("pulse", "product") === CORE.identityHues.pulse,
+  "Pulse Aurora product palette did not resolve the violet identity hue",
+);
+assert(DEFAULT_SPLASH_MOTIF.pulse === "pulse", "Pulse did not resolve its default splash motif");
+assert(
+  PULSE_SIGNAL_PATH === "M42 133H74L89 116L103 137L120 72L136 158L151 120L166 133H198",
+  "Pulse signal path drifted from the approved design",
+);
+assert(
+  PULSE_SIGNAL_HIGHLIGHT_PATH === "M44 130H74L89 113L103 134L120 69L136 155L151 117L166 130H196",
+  "Pulse signal highlight path drifted from the approved design",
+);
+assert(PULSE_SIGNAL_SEGMENTS.length === 8, "Pulse signal must contain eight segments");
+assert(
+  PULSE_SIGNAL_POINTS[0][0] === 42 &&
+    PULSE_SIGNAL_POINTS[0][1] === 133 &&
+    PULSE_SIGNAL_POINTS[1][0] === 74 &&
+    PULSE_SIGNAL_POINTS[1][1] === 133,
+  "Pulse signal first horizontal endpoints drifted",
+);
+assert(
+  PULSE_SIGNAL_POINTS[7][0] === 166 &&
+    PULSE_SIGNAL_POINTS[7][1] === 133 &&
+    PULSE_SIGNAL_POINTS[8][0] === 198 &&
+    PULSE_SIGNAL_POINTS[8][1] === 133,
+  "Pulse signal last horizontal endpoints drifted",
+);
+assert(
+  PULSE_SIGNAL_SEGMENTS.some(({ angleDeg }) => angleDeg > 0),
+  "Pulse signal must contain a positive diagonal angle",
+);
+assert(
+  PULSE_SIGNAL_SEGMENTS.some(({ angleDeg }) => angleDeg < 0),
+  "Pulse signal must contain a negative diagonal angle",
 );
 
 console.log("smoke ok");

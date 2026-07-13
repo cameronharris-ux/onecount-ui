@@ -34,17 +34,11 @@ import { CORE, MOTION, themeForApp, type AppKey } from "@onecount/ui-tokens";
 import { BRAND_MARK_SEGMENTS, BRAND_MARK_UNITS, segmentStyle, type MarkSegment } from "./BrandMark";
 import { hapticMoment } from "./haptics";
 import { DUR, EASE, SPRING } from "./motion";
-import { SPLASH_MOTIFS, type SplashMotifName } from "./motifs";
+import { SPLASH_MOTIFS } from "./motifs";
+import { DEFAULT_SPLASH_MOTIF, type SplashMotifName } from "./splashContract";
 import { useReducedMotion } from "./useReducedMotion";
 
 const STAGES = MOTION.splashStages;
-
-const DEFAULT_MOTIF: Record<string, SplashMotifName> = {
-  onecount: "barcode",
-  ops: "workflow",
-  shield: "boundary",
-  trace: "trace",
-};
 
 /** Where each segment starts before it assembles (barcode-lines-aligning). */
 function segmentStart(segment: MarkSegment): { x: number; y: number; rotate: number } {
@@ -131,7 +125,7 @@ export interface BrandSplashProps {
   wordmark?: ReactNode;
   /** Optional short descriptor beneath the name. */
   descriptor?: string;
-  /** Motif override; defaults per app (barcode/workflow/boundary/trace). */
+  /** Motif override; defaults per app (barcode/workflow/boundary/trace/pulse). */
   motif?: SplashMotifName;
   backgroundColor?: string;
   /** Identity hue override for the mark dot + motif accents. */
@@ -170,7 +164,7 @@ export function BrandSplash({
   const bg = backgroundColor ?? colors.background;
   const markColor = colors.text;
   const identity = accent ?? CORE.identityHues[themeName];
-  const motifName = motif ?? DEFAULT_MOTIF[themeName] ?? "barcode";
+  const motifName = motif ?? DEFAULT_SPLASH_MOTIF[themeName];
   const Motif = SPLASH_MOTIFS[motifName];
 
   const markHeight = 128;

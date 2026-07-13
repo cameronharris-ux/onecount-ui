@@ -62,14 +62,9 @@ const BrandMark_1 = require("./BrandMark");
 const haptics_1 = require("./haptics");
 const motion_1 = require("./motion");
 const motifs_1 = require("./motifs");
+const splashContract_1 = require("./splashContract");
 const useReducedMotion_1 = require("./useReducedMotion");
 const STAGES = ui_tokens_1.MOTION.splashStages;
-const DEFAULT_MOTIF = {
-    onecount: "barcode",
-    ops: "workflow",
-    shield: "boundary",
-    trace: "trace",
-};
 /** Where each segment starts before it assembles (barcode-lines-aligning). */
 function segmentStart(segment) {
     switch (segment.key) {
@@ -124,14 +119,14 @@ function AssemblingSegment({ segment, unit, color, index, reducedMotion, }) {
         ] }));
 }
 function BrandSplash({ app, productName, wordmark, descriptor, motif, backgroundColor, accent, haptics = true, autoHide = true, dismiss = false, onDone, style, }) {
-    var _a, _b, _c;
+    var _a, _b;
     const reducedMotion = (0, useReducedMotion_1.useReducedMotion)();
     const { theme, themeName } = (0, ui_tokens_1.themeForApp)(app);
     const colors = theme.colors.dark;
     const bg = backgroundColor !== null && backgroundColor !== void 0 ? backgroundColor : colors.background;
     const markColor = colors.text;
     const identity = accent !== null && accent !== void 0 ? accent : ui_tokens_1.CORE.identityHues[themeName];
-    const motifName = (_a = motif !== null && motif !== void 0 ? motif : DEFAULT_MOTIF[themeName]) !== null && _a !== void 0 ? _a : "barcode";
+    const motifName = motif !== null && motif !== void 0 ? motif : splashContract_1.DEFAULT_SPLASH_MOTIF[themeName];
     const Motif = motifs_1.SPLASH_MOTIFS[motifName];
     const markHeight = 128;
     const unit = markHeight / BrandMark_1.BRAND_MARK_UNITS.height;
@@ -227,7 +222,7 @@ function BrandSplash({ app, productName, wordmark, descriptor, motif, background
         transform: [{ translateY: nameY.value }],
     }));
     const descStyle = (0, react_native_reanimated_1.useAnimatedStyle)(() => ({ opacity: descOpacity.value }));
-    return ((0, jsx_runtime_1.jsxs)(react_native_reanimated_1.default.View, { pointerEvents: "none", accessibilityElementsHidden: true, importantForAccessibility: "no-hide-descendants", style: [react_native_1.StyleSheet.absoluteFill, styles.root, { backgroundColor: bg }, rootStyle, style], children: [!reducedMotion ? ((0, jsx_runtime_1.jsx)(Motif, { lineColor: withAlpha(markColor, 0.6), accent: identity, markHeight: markHeight })) : null, wordmark ? ((0, jsx_runtime_1.jsxs)(react_native_reanimated_1.default.View, { style: [styles.nameWrap, markWrapStyle, nameStyle], children: [wordmark, descriptor ? ((0, jsx_runtime_1.jsx)(react_native_reanimated_1.default.Text, { style: [styles.descriptor, { color: (_b = colors.textMuted) !== null && _b !== void 0 ? _b : withAlpha(markColor, 0.55) }, descStyle], children: descriptor })) : null] })) : ((0, jsx_runtime_1.jsxs)(jsx_runtime_1.Fragment, { children: [(0, jsx_runtime_1.jsx)(react_native_reanimated_1.default.View, { style: markWrapStyle, children: (0, jsx_runtime_1.jsx)(react_native_1.View, { style: { width: BrandMark_1.BRAND_MARK_UNITS.width * unit, height: markHeight }, children: BrandMark_1.BRAND_MARK_SEGMENTS.map((segment, index) => ((0, jsx_runtime_1.jsx)(AssemblingSegment, { segment: segment, unit: unit, color: segment.dot ? identity : markColor, index: index, reducedMotion: reducedMotion }, segment.key))) }) }), (0, jsx_runtime_1.jsxs)(react_native_reanimated_1.default.View, { style: [styles.nameWrap, nameStyle], children: [(0, jsx_runtime_1.jsx)(react_native_1.Text, { style: [styles.name, { color: markColor }], children: productName }), descriptor ? ((0, jsx_runtime_1.jsx)(react_native_reanimated_1.default.Text, { style: [styles.descriptor, { color: (_c = colors.textMuted) !== null && _c !== void 0 ? _c : withAlpha(markColor, 0.55) }, descStyle], children: descriptor })) : null] })] }))] }));
+    return ((0, jsx_runtime_1.jsxs)(react_native_reanimated_1.default.View, { pointerEvents: "none", accessibilityElementsHidden: true, importantForAccessibility: "no-hide-descendants", style: [react_native_1.StyleSheet.absoluteFill, styles.root, { backgroundColor: bg }, rootStyle, style], children: [!reducedMotion ? ((0, jsx_runtime_1.jsx)(Motif, { lineColor: withAlpha(markColor, 0.6), accent: identity, markHeight: markHeight })) : null, wordmark ? ((0, jsx_runtime_1.jsxs)(react_native_reanimated_1.default.View, { style: [styles.nameWrap, markWrapStyle, nameStyle], children: [wordmark, descriptor ? ((0, jsx_runtime_1.jsx)(react_native_reanimated_1.default.Text, { style: [styles.descriptor, { color: (_a = colors.textMuted) !== null && _a !== void 0 ? _a : withAlpha(markColor, 0.55) }, descStyle], children: descriptor })) : null] })) : ((0, jsx_runtime_1.jsxs)(jsx_runtime_1.Fragment, { children: [(0, jsx_runtime_1.jsx)(react_native_reanimated_1.default.View, { style: markWrapStyle, children: (0, jsx_runtime_1.jsx)(react_native_1.View, { style: { width: BrandMark_1.BRAND_MARK_UNITS.width * unit, height: markHeight }, children: BrandMark_1.BRAND_MARK_SEGMENTS.map((segment, index) => ((0, jsx_runtime_1.jsx)(AssemblingSegment, { segment: segment, unit: unit, color: segment.dot ? identity : markColor, index: index, reducedMotion: reducedMotion }, segment.key))) }) }), (0, jsx_runtime_1.jsxs)(react_native_reanimated_1.default.View, { style: [styles.nameWrap, nameStyle], children: [(0, jsx_runtime_1.jsx)(react_native_1.Text, { style: [styles.name, { color: markColor }], children: productName }), descriptor ? ((0, jsx_runtime_1.jsx)(react_native_reanimated_1.default.Text, { style: [styles.descriptor, { color: (_b = colors.textMuted) !== null && _b !== void 0 ? _b : withAlpha(markColor, 0.55) }, descStyle], children: descriptor })) : null] })] }))] }));
 }
 /** #RRGGBB → rgba(...) — local, avoids a color dependency. */
 function withAlpha(hex, alpha) {
