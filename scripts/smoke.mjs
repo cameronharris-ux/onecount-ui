@@ -7,6 +7,8 @@ const distDir = path.join(root, "dist");
 const indexJs = path.join(distDir, "index.js");
 const indexDts = path.join(distDir, "index.d.ts");
 const brandSplashDts = path.join(distDir, "BrandSplash.d.ts");
+const motionSheetJs = path.join(distDir, "MotionSheet.js");
+const motionSheetDts = path.join(distDir, "MotionSheet.d.ts");
 
 const expectedFiles = [
   "AiBadge",
@@ -83,6 +85,26 @@ const brandSplashTypes = fs.readFileSync(brandSplashDts, "utf8");
 assert(
   brandSplashTypes.includes("wordmark?: ReactNode"),
   "BrandSplash must expose the shared canonical wordmark slot",
+);
+
+const packageJson = JSON.parse(fs.readFileSync(path.join(root, "package.json"), "utf8"));
+assert(packageJson.version === "0.3.4", "shared UI maintenance version must be 0.3.4");
+
+const motionSheetTypes = fs.readFileSync(motionSheetDts, "utf8");
+assert(
+  motionSheetTypes.includes("backdropDisabled?: boolean"),
+  "MotionSheet must expose semantic backdrop disabling",
+);
+const motionSheetRuntime = fs.readFileSync(motionSheetJs, "utf8");
+assert(
+  motionSheetRuntime.includes("backdropDisabled = false"),
+  "MotionSheet must default backdropDisabled to false",
+);
+assert(
+  motionSheetRuntime.includes(
+    "accessibilityState: { disabled: backdropDisabled }, disabled: backdropDisabled",
+  ),
+  "MotionSheet must make its backdrop pressable semantically disabled",
 );
 
 const require = createRequire(import.meta.url);

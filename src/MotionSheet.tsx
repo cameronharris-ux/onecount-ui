@@ -42,6 +42,8 @@ export interface MotionSheetProps {
   backdropOpacity?: number;
   /** Screen-reader label for the tap-outside-to-dismiss backdrop. */
   backdropAccessibilityLabel?: string;
+  /** Disables backdrop dismissal and exposes its disabled accessibility state. */
+  backdropDisabled?: boolean;
   sheetStyle?: StyleProp<ViewStyle>;
   contentContainerStyle?: StyleProp<ViewStyle>;
   testID?: string;
@@ -53,6 +55,7 @@ export function MotionSheet({
   children,
   backdropOpacity: backdropOpacityProp,
   backdropAccessibilityLabel = "Close",
+  backdropDisabled = false,
   sheetStyle,
   contentContainerStyle,
   testID,
@@ -131,6 +134,8 @@ export function MotionSheet({
           <Pressable
             accessibilityRole="button"
             accessibilityLabel={backdropAccessibilityLabel}
+            accessibilityState={{ disabled: backdropDisabled }}
+            disabled={backdropDisabled}
             style={StyleSheet.absoluteFillObject}
             onPress={handleRequestClose}
           />

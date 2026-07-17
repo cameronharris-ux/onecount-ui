@@ -25,8 +25,10 @@ export interface MotionSheetProps {
     backdropOpacity?: number;
     /** Screen-reader label for the tap-outside-to-dismiss backdrop. */
     backdropAccessibilityLabel?: string;
+    /** Disables backdrop dismissal and exposes its disabled accessibility state. */
+    backdropDisabled?: boolean;
     sheetStyle?: StyleProp<ViewStyle>;
     contentContainerStyle?: StyleProp<ViewStyle>;
     testID?: string;
 }
-export declare function MotionSheet({ visible, onRequestClose, children, backdropOpacity: backdropOpacityProp, backdropAccessibilityLabel, sheetStyle, contentContainerStyle, testID, }: MotionSheetProps): React.JSX.Element | null;
+export declare function MotionSheet({ visible, onRequestClose, children, backdropOpacity: backdropOpacityProp, backdropAccessibilityLabel, backdropDisabled, sheetStyle, contentContainerStyle, testID, }: MotionSheetProps): React.JSX.Element | null;
